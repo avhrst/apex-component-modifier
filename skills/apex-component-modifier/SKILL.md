@@ -2,7 +2,7 @@
 name: apex-component-modifier
 description: Export/patch/import Oracle APEX components (pages/shared components) via SQLcl over MCP. Uses local apex_imp package docs stored in this skill directory to plan safe modifications, applies required DB changes, patches exported component files, then re-imports through SQLcl.
 argument-hint: "[conn|env] [app-id] [component] -- <change request>"
-disable-model-invocation: true
+disable-model-invocation: false
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git *), Bash(python *), MCP
 ---
 
@@ -19,7 +19,7 @@ Use this skill to **modify an Oracle APEX component** (most commonly a Page or S
 6) Import the modified component back into APEX via SQLcl MCP
 7) Validate (optional but recommended): re-export and diff
 
-> This workflow has real side effects (DB + APEX). Therefore the skill is **manual-only** (`disable-model-invocation: true`).
+> This workflow has real side effects (DB + APEX). The skill can be invoked by both the user and the model (`disable-model-invocation: false`).
 
 ## Inputs
 Recommended argument structure (free-form is fine, but this is preferred):
