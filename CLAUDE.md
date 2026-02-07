@@ -38,5 +38,30 @@ A repeatable workflow:
 
 ---
 
-## Repository layout (recommended)
+## Repository layout
+
+```
+apex-component-modifier/
+├── .mcp.json                                    -- SQLcl MCP server config
+├── CLAUDE.md                                    -- Project instructions (this file)
+├── README.md                                    -- Project overview & setup guide
+└── skills/
+    └── apex-component-modifier/
+        ├── SKILL.md                             -- Skill definition (workflow + instructions)
+        ├── references/
+        │   └── apex_imp/
+        │       ├── README.md                    -- Reference index & quick lookup table
+        │       ├── apex_imp.md                  -- wwv_flow_imp core (import engine, ID system, file format)
+        │       ├── imp_page.md                  -- wwv_flow_imp_page (pages, regions, items, buttons, DAs, IR/IG, charts, maps, cards)
+        │       ├── imp_shared.md                -- wwv_flow_imp_shared (LOVs, auth, lists, templates, build options)
+        │       ├── valid_values.md              -- All enumerated parameter values (region/item/process types, etc.)
+        │       ├── app_install.md               -- apex_application_install (pre-import configuration)
+        │       └── export_api.md                -- apex_export & SQLcl export commands
+        ├── templates/
+        │   ├── patch_plan.md                    -- Change plan template
+        │   └── validation_checklist.md          -- Post-patch validation checklist
+        └── tools/
+            ├── normalize_export_paths.md        -- Component selector → file path mapping
+            └── patching_guidelines.md           -- Safe patching strategies & rules
+```
 

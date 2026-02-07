@@ -13,7 +13,7 @@ A **Claude Code Skill** that exports an Oracle APEX component, modifies the expo
 
 1. Clone this repo
 2. Configure `.mcp.json` — set `SQLCL_PATH` env var if `sql` is not on PATH
-3. Place any additional `apex_imp` documentation in `.claude/skills/apex-component-modifier/references/apex_imp/`
+3. Place any additional `apex_imp` documentation in `skills/apex-component-modifier/references/apex_imp/`
 
 ## Usage
 
@@ -42,17 +42,23 @@ Arguments:
 ## Repository Structure
 
 ```
-.claude/skills/apex-component-modifier/
-  SKILL.md                          -- Skill definition (workflow + instructions)
+skills/apex-component-modifier/
+  SKILL.md                             -- Skill definition (workflow + instructions)
   references/apex_imp/
-    README.md                       -- Reference docs index
-    apex_imp.md                     -- Full API reference for wwv_flow_imp* packages
+    README.md                          -- Reference index & quick lookup table
+    apex_imp.md                        -- wwv_flow_imp core (import engine, ID system, file format)
+    imp_page.md                        -- wwv_flow_imp_page (pages, regions, items, buttons, DAs, IR/IG, charts, maps, cards)
+    imp_shared.md                      -- wwv_flow_imp_shared (LOVs, auth, lists, templates, build options)
+    valid_values.md                    -- All enumerated parameter values (region/item/process types, etc.)
+    app_install.md                     -- apex_application_install (pre-import configuration)
+    export_api.md                      -- apex_export & SQLcl export commands
   templates/
-    patch_plan.md                   -- Change plan template
-    validation_checklist.md         -- Post-patch validation checklist
+    patch_plan.md                      -- Change plan template
+    validation_checklist.md            -- Post-patch validation checklist
   tools/
-    normalize_export_paths.md       -- Component selector → file path mapping
-    patching_guidelines.md          -- Safe patching strategies and rules
-.mcp.json                          -- SQLcl MCP server configuration
-CLAUDE.md                          -- Project instructions for Claude Code
+    normalize_export_paths.md          -- Component selector → file path mapping
+    patching_guidelines.md             -- Safe patching strategies & rules
+.mcp.json                             -- SQLcl MCP server configuration
+CLAUDE.md                             -- Project instructions for Claude Code
+README.md                             -- This file
 ```
