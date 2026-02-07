@@ -2,7 +2,11 @@
   "mcpServers": {
     "sqlcl": {
       "command": "${SQLCL_PATH:-sql}",
-      "args": ["-mcp"],
+      "args": [
+        "-R",
+        "1",
+        "-mcp"
+      ],
       "env": {}
     }
   }
