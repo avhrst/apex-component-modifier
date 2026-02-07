@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "sqlcl": {
-      "command": "${SQLCL_PATH:-sql}",
-      "args": ["-mcp"],
-      "env": {}
-    }
-  }
-}
