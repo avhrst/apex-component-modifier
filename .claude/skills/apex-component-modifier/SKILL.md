@@ -21,14 +21,30 @@ Use this skill to **modify an Oracle APEX component** (most commonly a Page or S
 
 > This workflow has real side effects (DB + APEX). The skill can be invoked by both the user and the model (`disable-model-invocation: false`).
 
+## Settings (env vars)
+
+These defaults are configured in `.claude/settings.json` and can be overridden per-user in `.claude/settings.local.json`:
+
+| Env var | Purpose | Example |
+|---------|---------|---------|
+| `SQLCL_CONNECTION` | SQLcl saved connection alias (in `~/.dbtools`) | `DEV` |
+| `APEX_APP_ID` | Default APEX application ID | `113` |
+| `APEX_WORKSPACE` | APEX workspace name | `DEV_WORKSPACE` |
+
 ## Inputs
+
 Recommended argument structure (free-form is fine, but this is preferred):
 - `$0`: environment/connection alias (e.g., `DEV`, `STG`, `PRD` or a SQLcl connect alias)
 - `$1`: `app-id` (numeric)
 - `$2`: component selector (e.g., `PAGE:10`, `LOV:<id>`, `REGION:<id>`, or "page 10", "shared LOV TAGS_LOV")
 - Remaining args: user change request (what to change and why)
 
-If inputs are incomplete, resolve missing details using `apex list` and/or queries against APEX views.
+**Fallback defaults:** When arguments are omitted, the skill uses the env var settings:
+- No connection arg → uses `$SQLCL_CONNECTION`
+- No app-id arg → uses `$APEX_APP_ID`
+- `$APEX_WORKSPACE` is used during import when the target workspace needs to be specified
+
+If inputs are still incomplete after applying defaults, resolve missing details using `apex list` and/or queries against APEX views.
 
 ## Preconditions / Assumptions
 - A configured SQLcl MCP server that can:
@@ -144,5 +160,8 @@ If inputs are incomplete, resolve missing details using `apex list` and/or queri
   - fix/rollback DB scripts before re-importing the APEX component.
 
 ## Examples
+- `/apex-component-modifier PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV, and create table APP_STATUS if missing.`
+  (uses `$SQLCL_CONNECTION` and `$APEX_APP_ID` from settings)
 - `/apex-component-modifier DEV 113 PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV, and create table APP_STATUS if missing.`
+  (explicit connection and app-id override settings)
 - `/apex-component-modifier STG 113 LOV:23618973754424510000 -- Rename LOV display column and update dependent items on Page 3.`

@@ -35,7 +35,7 @@ New: ,p_prompt=>'Full Name'
 **Use when:** adding a new region, item, button, process, DA, validation, or computation to a page.
 
 **Approach:**
-1. Determine the correct section in the file (see component ordering in `apex_imp.md` section 7.7)
+1. Determine the correct section in the file (see component ordering in `apex_imp.md` sections 6.2–6.3)
 2. Pick a new unique ID (see ID generation below)
 3. Insert a complete `begin...end;` / `/` block with the `create_*` call
 4. Update the manifest comment block at the top of the file
@@ -160,7 +160,7 @@ Rules:
 | Unbalanced `begin`/`end;` | Count blocks before and after patch |
 | ID collision | Scan all existing IDs in the file first |
 | Orphaned cross-reference | Search the file for the old ID before removing a component |
-| Wrong section | Follow the ordering rules in `apex_imp.md` section 7.7 |
+| Wrong section | Follow the ordering rules in `apex_imp.md` sections 6.2–6.3 |
 | Corrupted `component_begin`/`component_end` | Never modify the wrapper blocks |
 | Missing manifest entry | Update the manifest comment when adding/removing components |
 | Broken `wwv_flow_string.join` | Ensure all lines end with `',` (except the last which ends with `'))` |

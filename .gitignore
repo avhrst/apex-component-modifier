@@ -1,2 +1,4 @@
 .mcp.json
-.claude/
+.claude/*
+!.claude/skills/
+!.claude/settings.json
