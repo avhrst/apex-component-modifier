@@ -2,6 +2,8 @@
 
 A **Claude Code Skill** that exports an Oracle APEX component, modifies the exported files, applies DB changes, and imports the component back — using **Oracle SQLcl's MCP Server**.
 
+[![Installation Guide](https://img.youtube.com/vi/XRdzPfbtRwM/maxresdefault.jpg)](https://www.youtube.com/watch?v=XRdzPfbtRwM)
+
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) CLI installed
