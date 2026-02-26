@@ -62,11 +62,16 @@ procedure create_page_plug (
     p_query_table                 in varchar2 default null,        -- table name (query_type=TABLE)
     p_is_editable                 in boolean  default null,
     p_edit_operations             in varchar2 default null,        -- i:u:d
-    p_plug_template_options       in varchar2 default null,        -- #DEFAULT#:t-Region--scrollBody
+    p_region_template_options     in varchar2 default null,        -- #DEFAULT#:t-Region--scrollBody (NOT p_plug_template_options!)
+    p_plug_new_grid_row           in boolean  default true,
+    p_plug_grid_column_span       in number   default null,        -- 1-12 grid columns
+    p_plug_new_grid_column        in boolean  default true,
+    p_plug_query_options          in varchar2 default null,
+    p_plug_query_show_nulls_as    in varchar2 default null,
     p_required_role               in varchar2 default null,
     p_required_patch              in number   default null
     -- also: p_flow_id, p_title, p_region_name, p_ajax_enabled, p_lazy_loading,
-    -- p_lost_update_check_type, p_include_rowid_column, p_plug_query_options
+    -- p_lost_update_check_type, p_include_rowid_column, p_region_css_classes
     );
 ```
 Sets `current_region_id` after creation.
