@@ -1,9 +1,8 @@
 ---
 name: apex-component-modifier
-description: Export/patch/import Oracle APEX components (pages/shared components) via SQLcl over MCP. Uses local apex_imp package docs stored in this skill directory to plan safe modifications, applies required DB changes, patches exported component files, then re-imports through SQLcl.
+description: Export/patch/import Oracle APEX components (pages/shared components) via SQLcl over MCP. Uses local apex_imp package docs to plan safe modifications, applies required DB changes, patches exported component files, then re-imports through SQLcl. Use whenever the user asks to add, modify, remove, inspect, or describe any Oracle APEX page component such as regions, items, buttons, processes, dynamic actions, validations, computations, branches, LOVs, or authorization schemes. Also use when the user mentions APEX pages, APEX components, APEX export/import, APEX patching, SQLcl APEX commands, or wants to change anything in an APEX application. Covers page items, interactive reports, interactive grids, charts, maps, cards, lists, templates, build options, authentication, and static files.
 argument-hint: "[conn|env] [app-id] [component] -- <change request>"
 disable-model-invocation: false
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git *), Bash(python *), MCP
 ---
 
 # Oracle APEX Component Modifier (SQLcl MCP)
