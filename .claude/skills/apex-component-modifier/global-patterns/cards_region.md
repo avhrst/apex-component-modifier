@@ -1,17 +1,17 @@
 # Cards Region (`NATIVE_CARDS`)
 
-Cards regions use `create_page_plug` with `p_plug_source_type=>'NATIVE_CARDS'` and template ID `2072724515482255512`.
+Uses `create_page_plug` with `p_plug_source_type=>'NATIVE_CARDS'` and template ID `2072724515482255512`.
 
 ## Region Template Options (Styles)
 
-| Style | Template Option | Used On |
-|-------|----------------|---------|
-| A | `#DEFAULT#:t-CardsRegion--styleA` | Pages 3, 4, 7 |
-| B | `#DEFAULT#:t-CardsRegion--styleB` | Pages 2, 3, 5, 6, 8, 9, 12, 15, 16, 18 |
-| C | `#DEFAULT#:t-CardsRegion--styleC` | Pages 3, 8 |
-| None | `#DEFAULT#` | Pages 10, 11, 13, 17, 18 |
+| Style | Template Option |
+|-------|----------------|
+| A | `#DEFAULT#:t-CardsRegion--styleA` |
+| B | `#DEFAULT#:t-CardsRegion--styleB` |
+| C | `#DEFAULT#:t-CardsRegion--styleC` |
+| None | `#DEFAULT#` |
 
-Additional CSS classes: `u-colors` (page 7, for color-coded cards)
+Additional CSS classes: `u-colors` (for color-coded cards)
 
 ## Data Sources
 
@@ -71,70 +71,35 @@ wwv_flow_imp_page.create_page_plug(
 ```
 
 ### WEB_SOURCE (REST Data Source)
+
+Uses `p_location=>'WEB_SOURCE'` + `p_web_src_module_id`. For post-processing, add `p_plug_source` with SQL referencing `#APEX$SOURCE_DATA#` and `p_source_post_processing=>'SQL'`.
+
 ```sql
-wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(10751429346883814026)
-,p_plug_name=>'APEX YouTube Channel'
-,p_region_template_options=>'#DEFAULT#:t-CardsRegion--styleB'
-,p_plug_template=>2072724515482255512
-,p_plug_display_sequence=>20
+-- Basic WEB_SOURCE
 ,p_location=>'WEB_SOURCE'
 ,p_web_src_module_id=>wwv_flow_imp.id(10751415422371804704)
-,p_lazy_loading=>false
 ,p_plug_source_type=>'NATIVE_CARDS'
 ,p_plug_query_num_rows=>3
 ,p_plug_query_num_rows_type=>'SET'
-,p_show_total_row_count=>false
-,p_pagination_display_position=>'BOTTOM_RIGHT'
-);
-```
 
-### WEB_SOURCE with post-processing SQL
-```sql
-wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(6068545264014251059)
-,p_plug_name=>'APEX Play List'
-,p_region_template_options=>'#DEFAULT#'
-,p_component_template_options=>'#DEFAULT#'
-,p_plug_template=>2072724515482255512
-,p_plug_display_sequence=>20
-,p_location=>'WEB_SOURCE'
-,p_web_src_module_id=>wwv_flow_imp.id(10751426478689804728)
+-- With post-processing SQL
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select ID,',
-'       ETAG,',
-'       KIND,',
-'       TITLE,',
-'       CHANNELID,',
-'       PLAYLISTID,',
-'       VIDEOID,',
-'       URL,',
-'       WIDTH,',
-'       HEIGHT,',
-'       DESCRIPTION,',
-'       PUBLISHEDAT,',
-'       VIDEOPUBLISHEDAT,',
+'select ID, TITLE, VIDEOID,',
 '       eba_demo_card_pkg.get_video_duration( p_video_id => VIDEOID ) VIDEO_DURATION',
 '  from #APEX$SOURCE_DATA#'))
 ,p_source_post_processing=>'SQL'
-,p_lazy_loading=>false
-,p_plug_source_type=>'NATIVE_CARDS'
-,p_plug_query_num_rows_type=>'SCROLL'
-,p_show_total_row_count=>false
-);
 ```
 
 ## Pagination
 
-| Type | Parameter | Used On |
-|------|-----------|---------|
-| Scroll | `p_plug_query_num_rows_type=>'SCROLL'` | Most pages |
-| Set (fixed count) | `p_plug_query_num_rows_type=>'SET'`, `p_plug_query_num_rows=>N` | Pages 2, 6, 7 |
+| Type | Parameters |
+|------|-----------|
+| Scroll | `p_plug_query_num_rows_type=>'SCROLL'` |
+| Fixed count | `p_plug_query_num_rows_type=>'SET'`, `p_plug_query_num_rows=>N` |
 
 ## No Data Found
 
 ```sql
--- Custom message with icon (page 17)
 ,p_plug_query_no_data_found=>'No Employees Found'
 ,p_no_data_found_icon_classes=>'fa-warning fa-lg'
 ```
@@ -142,45 +107,24 @@ wwv_flow_imp_page.create_page_plug(
 ## Order By (item-driven)
 
 ```sql
--- Page 15: Order by select list
 ,p_query_order_by_type=>'ITEM'
 ,p_query_order_by=>'{"orderBys":[{"key":"ENAME","expr":"\"ENAME\" asc"},{"key":"JOB","expr":"\"JOB\" asc"}],"itemName":"P15_ORDER_BY"}'
 ```
 
-## Color-Coded Cards (SQL with CASE)
+## Color-Coded Cards
 
+Use SQL CASE + Universal Theme color modifiers (`u-color-2` through `u-color-5`):
 ```sql
--- Page 18: Dynamic color via SQL CASE + Universal Theme color modifiers
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select EMPNO,',
-'       ENAME,',
-'       JOB,',
-'       DEPTNO,',
-'       case when deptno = 10 then',
-'           ''u-color-2''',
-'       when deptno = 20 then',
-'           ''u-color-3''',
-'       when deptno = 30 then',
-'           ''u-color-4''',
-'       when deptno = 40 then',
-'           ''u-color-5''',
+'select EMPNO, ENAME, JOB, DEPTNO,',
+'       case when deptno = 10 then ''u-color-2''',
+'            when deptno = 20 then ''u-color-3''',
+'            when deptno = 30 then ''u-color-4''',
+'            when deptno = 40 then ''u-color-5''',
 '       end card_color',
 '  from EBA_DEMO_CARD_EMP'))
 ```
 
 ## Faceted Search Integration
 
-```sql
--- Page 12: Cards as filtered region of faceted search
-wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(9825920105389872644)
-,p_plug_name=>'Search'
-,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--hideHeader js-addHiddenHeadingRoleDesc:t-Region--scrollBody'
-,p_plug_template=>4072358936313175081
-,p_plug_display_sequence=>10
-,p_plug_grid_column_span=>4
-,p_plug_display_point=>'REGION_POSITION_02'
-,p_plug_source_type=>'NATIVE_FACETED_SEARCH'
-,p_filtered_region_id=>wwv_flow_imp.id(9825919996571872644)
-);
-```
+Cards as filtered region: faceted search panel points `p_filtered_region_id` to the cards region ID. See `faceted_search.md`.

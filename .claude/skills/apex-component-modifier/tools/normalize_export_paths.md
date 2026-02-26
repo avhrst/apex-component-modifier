@@ -1,17 +1,14 @@
 # Normalize Export Paths
 
-Map APEX component selectors to file paths in a split export (`<workdir>/f<APP_ID>/`).
-
----
+Map component selectors to file paths in a split export (`<workdir>/f<APP_ID>/`).
 
 ## Pages
 
-`PAGE:<N>` → `application/pages/page_%05d.sql` (zero-padded to 5 digits)
+`PAGE:<N>` -> `application/pages/page_%05d.sql` (zero-padded to 5 digits)
 
 | Selector | File |
 |----------|------|
 | `PAGE:0` | `application/pages/page_00000.sql` (Global Page) |
-| `PAGE:1` | `application/pages/page_00001.sql` |
 | `PAGE:10` | `application/pages/page_00010.sql` |
 
 ## Shared Components
@@ -26,7 +23,7 @@ Map APEX component selectors to file paths in a split export (`<workdir>/f<APP_I
 
 Template types: `region/`, `page/`, `button/`, `label/`, `list/`, `report/`, `popup_lov/`, `calendar/`, `breadcrumb/`
 
-LOV files are named by LOV name (lowercased, spaces → underscores). Use `Glob` if name is unknown.
+LOV files named by LOV name (lowercased, spaces -> underscores). Use `Glob` if name unknown.
 
 ## Fixed-Path Components
 
@@ -46,10 +43,10 @@ All paths relative to `application/`.
 
 ## Discovery
 
-When exact file name is unknown: `Glob: application/shared_components/user_interface/lovs/*.sql` or `Grep: "p_name=>'STATUS_LOV'" in application/shared_components/`
+When exact file name unknown: `Glob: application/shared_components/user_interface/lovs/*.sql` or `Grep: "p_name=>'STATUS_LOV'" in application/shared_components/`
 
 ## Install Script
 
 - Full export: `install.sql` uses `@@application/pages/page_00010.sql`
 - Partial: `install_component.sql` references only exported files
-- New shared component files must be added as `@@` lines in the install script before dependent pages
+- New shared component files must be added as `@@` lines before dependent pages

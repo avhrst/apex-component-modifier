@@ -1,13 +1,10 @@
-# WWV_FLOW_IMP_PAGE — Page Component Procedures
+# WWV_FLOW_IMP_PAGE -- Page Component Procedures
 
-Source: APEX 24.2 (`APEX_240200`). Primary package for creating all page components during import.
-
----
+Source: APEX 24.2 (`APEX_240200`).
 
 ## Page
 
 ### create_page
-
 ```sql
 procedure create_page (
     p_id                          in number,              -- raw page number (NOT wwv_flow_imp.id())
@@ -26,7 +23,7 @@ procedure create_page (
     p_inline_css                  in varchar2 default null,
     p_page_is_public_y_n          in varchar2 default 'N',
     p_protection_level            in varchar2 default 'N',
-    p_group_id                    in number   default null,
+    p_group_id                    in number   default null
     -- also: p_help_text, p_page_css_classes, p_allow_duplicate_submissions,
     -- p_javascript_code, p_css_file_urls, p_dialog_title/height/width/chained,
     -- p_last_updated_by, p_last_upd_yyyymmddhh24miss
@@ -34,7 +31,6 @@ procedure create_page (
 ```
 
 ### create_page_group
-
 ```sql
 procedure create_page_group (
     p_id in number, p_flow_id in number default wwv_flow.g_flow_id,
@@ -42,18 +38,14 @@ procedure create_page_group (
 ```
 
 ### update_page / remove_page
-
 ```sql
 procedure update_page (p_id in number default null, ...);
 procedure remove_page (p_flow_id in number, p_page_id in number);
 ```
 
----
-
 ## Regions
 
 ### create_page_plug
-
 ```sql
 procedure create_page_plug (
     p_id                          in number   default null,
@@ -67,21 +59,19 @@ procedure create_page_plug (
     p_location                    in varchar2 default 'LOCAL',     -- LOCAL | REMOTE | WEB_SOURCE
     p_query_type                  in varchar2 default null,        -- SQL | TABLE | FUNC_BODY_RETURNING_SQL
     p_plug_source                 in varchar2 default null,        -- SQL query or static content
-    p_query_table                 in varchar2 default null,        -- table name (when query_type=TABLE)
+    p_query_table                 in varchar2 default null,        -- table name (query_type=TABLE)
     p_is_editable                 in boolean  default null,
     p_edit_operations             in varchar2 default null,        -- i:u:d
     p_plug_template_options       in varchar2 default null,        -- #DEFAULT#:t-Region--scrollBody
     p_required_role               in varchar2 default null,
-    p_required_patch              in number   default null,
+    p_required_patch              in number   default null
     -- also: p_flow_id, p_title, p_region_name, p_ajax_enabled, p_lazy_loading,
     -- p_lost_update_check_type, p_include_rowid_column, p_plug_query_options
     );
 ```
-
 Sets `current_region_id` after creation.
 
 ### create_report_columns (Classic Report)
-
 ```sql
 procedure create_report_columns (
     p_id in number, p_region_id in number default current_region_id,
@@ -92,7 +82,6 @@ procedure create_report_columns (
 ```
 
 ### create_region_column (IG / Cards / Modern)
-
 ```sql
 procedure create_region_column (
     p_id in number, p_region_id in number default current_region_id,
@@ -100,17 +89,14 @@ procedure create_region_column (
     p_source_expression in varchar2 default null, p_data_type in varchar2 default null,
     p_item_type in varchar2 default null, p_is_visible in boolean default null,
     p_heading in varchar2 default null, p_display_sequence in number,
-    p_is_primary_key in boolean default null, p_is_required in boolean default null,
+    p_is_primary_key in boolean default null, p_is_required in boolean default null
     -- also: p_flow_id, p_page_id, p_enable_filter, p_enable_sort_group
     );
 ```
 
----
-
 ## Page Items
 
 ### create_page_item
-
 ```sql
 procedure create_page_item (
     p_id                    in number   default null,
@@ -135,22 +121,18 @@ procedure create_page_item (
     p_read_only_when        in varchar2 default null,
     p_read_only_when_type   in varchar2 default null,
     p_security_scheme       in varchar2 default null,
-    p_attribute_01 .. p_attribute_25 in varchar2 default null,  -- plugin/type-specific attrs
+    p_attribute_01 .. p_attribute_25 in varchar2 default null  -- plugin/type-specific attrs
     -- also: p_flow_id, p_flow_step_id, p_is_primary_key, p_item_source_plug_id,
     -- p_placeholder, p_format_mask, p_source_data_type, p_cSize, p_cMaxlength,
     -- p_cHeight, p_help_text, p_is_persistent, p_protection_level,
     -- p_ai_enabled, p_ai_config_id
     );
 ```
-
-**Item naming:** `P<page_id>_<name>` (e.g., `P10_EMPNO`).
-
----
+Item naming: `P<page_id>_<name>` (e.g., `P10_EMPNO`).
 
 ## Buttons
 
 ### create_page_button
-
 ```sql
 procedure create_page_button (
     p_id                         in number   default null,
@@ -165,18 +147,15 @@ procedure create_page_button (
     p_button_execute_validations in varchar2 default 'Y',
     p_button_condition           in varchar2 default null,
     p_button_condition_type      in varchar2 default null,
-    p_database_action            in varchar2 default null,          -- INSERT | UPDATE | DELETE
+    p_database_action            in varchar2 default null           -- INSERT | UPDATE | DELETE
     -- also: p_flow_id, p_flow_step_id, p_button_static_id, p_button_redirect_url,
     -- p_confirm_message, p_icon_css_classes, p_security_scheme
     );
 ```
 
----
-
 ## Processes
 
 ### create_page_process
-
 ```sql
 procedure create_page_process (
     p_id                      in number   default null,
@@ -193,18 +172,15 @@ procedure create_page_process (
     p_process_when_button_id  in number   default null,
     p_process_when            in varchar2 default null,
     p_process_when_type       in varchar2 default null,
-    p_security_scheme         in varchar2 default null,
+    p_security_scheme         in varchar2 default null
     -- also: p_flow_id, p_flow_step_id, p_process_clob_language, p_location,
     -- p_process_success_message, p_internal_uid
     );
 ```
 
----
-
 ## Validations
 
 ### create_page_validation
-
 ```sql
 procedure create_page_validation (
     p_id in number, p_validation_name in varchar2,
@@ -214,17 +190,14 @@ procedure create_page_validation (
     p_error_message in varchar2, p_always_execute in varchar2 default 'N',
     p_when_button_pressed in varchar2 default null,
     p_associated_item in number default null,
-    p_error_display_location in varchar2 default 'ON_ERROR_PAGE',
+    p_error_display_location in varchar2 default 'ON_ERROR_PAGE'
     -- also: p_flow_id, p_flow_step_id
     );
 ```
 
----
-
 ## Computations
 
 ### create_page_computation
-
 ```sql
 procedure create_page_computation (
     p_id in number, p_computation_sequence in number,
@@ -232,17 +205,14 @@ procedure create_page_computation (
     p_computation_point in varchar2 default 'AFTER_SUBMIT',
     p_computation_type in varchar2 default 'SQL_EXPRESSION',
     p_computation in varchar2,
-    p_compute_when in varchar2 default null, p_compute_when_type in varchar2 default null,
+    p_compute_when in varchar2 default null, p_compute_when_type in varchar2 default null
     -- also: p_flow_id, p_flow_step_id, p_security_scheme
     );
 ```
 
----
-
 ## Branches
 
 ### create_page_branch
-
 ```sql
 procedure create_page_branch (
     p_id in number, p_branch_name in varchar2 default null,
@@ -250,17 +220,14 @@ procedure create_page_branch (
     p_branch_type in varchar2,  -- REDIRECT_URL | BRANCH_TO_PAGE_ACCEPT | ...
     p_branch_when_button_id in number default null,
     p_branch_sequence in number, p_branch_condition_type in varchar2 default null,
-    p_branch_condition in varchar2 default null,
+    p_branch_condition in varchar2 default null
     -- also: p_flow_id, p_flow_step_id, p_save_state_before_branch_yn, p_security_scheme
     );
 ```
 
----
-
 ## Dynamic Actions
 
 ### create_page_da_event
-
 ```sql
 procedure create_page_da_event (
     p_id                        in number   default null,
@@ -276,13 +243,12 @@ procedure create_page_da_event (
     p_bind_event_type           in varchar2,                 -- change | click | ready | custom | ...
     p_bind_event_type_custom    in varchar2 default null,
     p_display_when_type         in varchar2 default null,
-    p_display_when_cond         in varchar2 default null,
+    p_display_when_cond         in varchar2 default null
     -- also: p_flow_id, p_page_id, p_security_scheme
     );
 ```
 
 ### create_page_da_action
-
 ```sql
 procedure create_page_da_action (
     p_id                     in number   default null,
@@ -294,46 +260,40 @@ procedure create_page_da_action (
     p_affected_elements_type in varchar2 default null,       -- ITEM | REGION | BUTTON | JQUERY_SELECTOR
     p_affected_region_id     in number   default null,
     p_affected_elements      in varchar2 default null,
-    p_attribute_01 .. p_attribute_15 in varchar2 default null,
+    p_attribute_01 .. p_attribute_15 in varchar2 default null
     -- also: p_flow_id, p_page_id, p_wait_for_result,
     -- p_client_condition_type, p_server_condition_type
     );
 ```
 
----
-
 ## Interactive Report
 
 ### create_worksheet
-
 ```sql
 procedure create_worksheet (
     p_id in number, p_region_id in number default current_region_id,
     p_name in varchar2 default null, p_max_row_count in varchar2 default null,
     p_no_data_found_message in varchar2 default null,
     p_show_search_bar in varchar2 default 'Y', p_show_detail_link in varchar2 default 'Y',
-    p_show_download in varchar2 default 'Y', p_lazy_loading in boolean default false,
+    p_show_download in varchar2 default 'Y', p_lazy_loading in boolean default false
     -- also: p_flow_id, p_page_id, p_show_actions_menu, p_download_formats, p_internal_uid
     );
 ```
-
 Sets `current_worksheet_id`.
 
 ### create_worksheet_column
-
 ```sql
 procedure create_worksheet_column (
     p_id in number, p_worksheet_id in number default current_worksheet_id,
     p_db_column_name in varchar2, p_display_order in number,
     p_column_identifier in varchar2,  -- A, B, C...
     p_column_label in varchar2, p_column_type in varchar2,  -- STRING | NUMBER | DATE
-    p_display_as in varchar2 default 'TEXT',
+    p_display_as in varchar2 default 'TEXT'
     -- also: p_heading_alignment, p_column_alignment, p_allow_sorting, p_allow_filtering, p_format_mask
     );
 ```
 
 ### create_worksheet_rpt
-
 ```sql
 procedure create_worksheet_rpt (
     p_id in number, p_worksheet_id in number default current_worksheet_id,
@@ -343,12 +303,9 @@ procedure create_worksheet_rpt (
     p_sort_column_1 in varchar2 default null, p_sort_direction_1 in varchar2 default null);
 ```
 
----
-
 ## Interactive Grid
 
 ### create_interactive_grid
-
 ```sql
 procedure create_interactive_grid (
     p_id in number, p_region_id in number default current_region_id,
@@ -360,13 +317,12 @@ procedure create_interactive_grid (
     p_show_toolbar in boolean default true,
     p_toolbar_buttons in varchar2 default 'SEARCH_COLUMN:SEARCH_FIELD:ACTIONS_MENU:RESET:SAVE',
     p_enable_download in boolean default true,
-    p_download_formats in varchar2 default 'CSV:HTML:PDF:XLSX',
+    p_download_formats in varchar2 default 'CSV:HTML:PDF:XLSX'
     -- also: p_flow_id, p_page_id, p_show_total_row_count, p_enable_save_public_report, p_internal_uid
     );
 ```
 
 ### create_ig_report / create_ig_report_view / create_ig_report_column
-
 ```sql
 procedure create_ig_report (
     p_id in number, p_interactive_grid_id in number,
@@ -383,8 +339,6 @@ procedure create_ig_report_column (
     p_is_frozen in boolean default false, p_width in number default null,
     p_sort_order in number default null, p_sort_direction in varchar2 default null);
 ```
-
----
 
 ## Charts
 
@@ -404,8 +358,6 @@ procedure create_jet_chart_series (
     p_data_source_type in varchar2, p_data_source in varchar2,
     p_items_value_column_name in varchar2, p_items_label_column_name in varchar2);
 ```
-
----
 
 ## Map / Cards / Tree / Search
 
@@ -432,14 +384,10 @@ procedure create_card_action (
     p_label in varchar2, p_link_target in varchar2 default null);
 ```
 
----
-
 ## Utility
 
 ```sql
-procedure set_calling_version(p_version in number);
--- Use wwv_flow_imp.c_apex_24_2 for current version
-
+procedure set_calling_version(p_version in number);  -- use wwv_flow_imp.c_apex_24_2
 procedure clear_ig_globals;
 procedure load_igs(p_application_id in number, p_page_id in number default null);
 procedure recreate_ig_rpt(p_application_id in number);

@@ -1,310 +1,230 @@
 # Valid Parameter Values Reference
 
-Comprehensive enumeration of all valid parameter values from APEX 24.2 source.
-
----
+APEX 24.2 source. All valid enumerated parameter values.
 
 ## Region Types (`p_plug_source_type`)
 
-| Value | Description |
-|-------|-------------|
-| `NATIVE_STATIC` | Static content |
-| `NATIVE_PLSQL` | PL/SQL dynamic content |
-| `NATIVE_DYNAMIC_CONTENT` | Dynamic content |
-| `NATIVE_SQL_REPORT` | Classic Report |
-| `NATIVE_IR` | Interactive Report |
-| `NATIVE_IG` | Interactive Grid |
-| `NATIVE_FORM` | Form region |
-| `NATIVE_CARDS` | Cards |
-| `NATIVE_JET_CHART` | JET Chart |
-| `NATIVE_MAP_REGION` | Map |
-| `NATIVE_CSS_CALENDAR` | Calendar |
-| `NATIVE_FACETED_SEARCH` | Faceted Search |
-| `NATIVE_SMART_FILTERS` | Smart Filters |
-| `NATIVE_SEARCH_REGION` | Search region |
-| `NATIVE_LIST` | List |
-| `NATIVE_BREADCRUMB` | Breadcrumb |
-| `NATIVE_JSTREE` | Tree (jsTree) |
-| `NATIVE_DISPLAY_SELECTOR` | Region Display Selector |
-| `NATIVE_URL` | URL region |
-| `NATIVE_HELP_TEXT` | Help text |
-| `NATIVE_WORKFLOW_DIAGRAM` | Workflow diagram |
-
----
+| Value |
+|-------|
+| `NATIVE_STATIC` |
+| `NATIVE_PLSQL` |
+| `NATIVE_DYNAMIC_CONTENT` |
+| `NATIVE_SQL_REPORT` -- Classic Report |
+| `NATIVE_IR` -- Interactive Report |
+| `NATIVE_IG` -- Interactive Grid |
+| `NATIVE_FORM` |
+| `NATIVE_CARDS` |
+| `NATIVE_JET_CHART` |
+| `NATIVE_MAP_REGION` |
+| `NATIVE_CSS_CALENDAR` |
+| `NATIVE_FACETED_SEARCH` |
+| `NATIVE_SMART_FILTERS` |
+| `NATIVE_SEARCH_REGION` |
+| `NATIVE_LIST` |
+| `NATIVE_BREADCRUMB` |
+| `NATIVE_JSTREE` -- Tree |
+| `NATIVE_DISPLAY_SELECTOR` |
+| `NATIVE_URL` |
+| `NATIVE_HELP_TEXT` |
+| `NATIVE_WORKFLOW_DIAGRAM` |
 
 ## Item Types (`p_display_as`)
 
-| Value | Description |
-|-------|-------------|
-| `NATIVE_TEXT_FIELD` | Text field |
-| `NATIVE_TEXTAREA` | Text area |
-| `NATIVE_NUMBER_FIELD` | Number field |
-| `NATIVE_PASSWORD` | Password |
-| `NATIVE_HIDDEN` | Hidden |
-| `NATIVE_DISPLAY_ONLY` | Display only |
-| `NATIVE_SELECT_LIST` | Select list |
+| Value | Notes |
+|-------|-------|
+| `NATIVE_TEXT_FIELD` | |
+| `NATIVE_TEXTAREA` | |
+| `NATIVE_NUMBER_FIELD` | |
+| `NATIVE_PASSWORD` | |
+| `NATIVE_HIDDEN` | |
+| `NATIVE_DISPLAY_ONLY` | |
+| `NATIVE_SELECT_LIST` | |
 | `NATIVE_CHECKBOX` | Checkbox group |
-| `NATIVE_SINGLE_CHECKBOX` | Single checkbox |
-| `NATIVE_RADIOGROUP` | Radio group |
-| `NATIVE_POPUP_LOV` | Popup LOV |
-| `NATIVE_SHUTTLE` | Shuttle |
-| `NATIVE_DATE_PICKER_APEX` | Date picker (current) |
-| `NATIVE_DATE_PICKER` | Date picker (deprecated 21.1) |
+| `NATIVE_SINGLE_CHECKBOX` | |
+| `NATIVE_RADIOGROUP` | |
+| `NATIVE_POPUP_LOV` | |
+| `NATIVE_SHUTTLE` | |
+| `NATIVE_DATE_PICKER_APEX` | Current |
+| `NATIVE_DATE_PICKER` | Deprecated 21.1 |
 | `NATIVE_FILE` | File browse |
-| `NATIVE_IMAGE_UPLOAD` | Image upload |
-| `NATIVE_RICH_TEXT_EDITOR` | Rich text editor |
-| `NATIVE_MARKDOWN_EDITOR` | Markdown editor |
-| `NATIVE_COLOR_PICKER` | Color picker |
-| `NATIVE_AUTO_COMPLETE` | Auto complete |
-| `NATIVE_LIST_MANAGER` | List manager |
+| `NATIVE_IMAGE_UPLOAD` | |
+| `NATIVE_RICH_TEXT_EDITOR` | |
+| `NATIVE_MARKDOWN_EDITOR` | |
+| `NATIVE_COLOR_PICKER` | |
+| `NATIVE_AUTO_COMPLETE` | |
+| `NATIVE_LIST_MANAGER` | |
 | `NATIVE_RANGE` | Range slider |
 | `NATIVE_YES_NO` | Yes/No switch |
-| `NATIVE_STAR_RATING` | Star rating |
+| `NATIVE_STAR_RATING` | |
 | `NATIVE_PCT_GRAPH` | Percent graph |
-| `NATIVE_DISPLAY_IMAGE` | Display image |
-| `NATIVE_LINK` | Link |
-| `NATIVE_HTML_EXPRESSION` | HTML expression |
-| `NATIVE_QRCODE` | QR code |
-| `NATIVE_GEOCODED_ADDRESS` | Geocoded address |
-| `NATIVE_DISPLAY_MAP` | Display map |
-| `NATIVE_COMBOBOX` | Combobox |
-| `NATIVE_SELECT_ONE` | Select one |
-| `NATIVE_SELECT_MANY` | Select many |
-| `NATIVE_INPUT` | Generic input |
-| `NATIVE_SEARCH` | Search item |
-| `NATIVE_ROW_ACTION` | Row action (IG) |
-| `NATIVE_ROW_SELECTOR` | Row selector (IG) |
-
----
+| `NATIVE_DISPLAY_IMAGE` | |
+| `NATIVE_LINK` | |
+| `NATIVE_HTML_EXPRESSION` | |
+| `NATIVE_QRCODE` | |
+| `NATIVE_GEOCODED_ADDRESS` | |
+| `NATIVE_DISPLAY_MAP` | |
+| `NATIVE_COMBOBOX` | |
+| `NATIVE_SELECT_ONE` | |
+| `NATIVE_SELECT_MANY` | |
+| `NATIVE_INPUT` | Generic |
+| `NATIVE_SEARCH` | |
+| `NATIVE_ROW_ACTION` | IG only |
+| `NATIVE_ROW_SELECTOR` | IG only |
 
 ## Process Types (`p_process_type`)
 
-| Value | Description |
-|-------|-------------|
-| `NATIVE_PLSQL` | PL/SQL code |
-| `NATIVE_FORM_FETCH` | Automatic row fetch |
-| `NATIVE_FORM_DML` | Form - Automatic Row Processing (DML) |
-| `NATIVE_FORM_PROCESS` | Form DML process |
-| `NATIVE_FORM_INIT` | Form initialization |
-| `NATIVE_IG_DML` | Interactive Grid DML |
-| `NATIVE_INVOKE_API` | Invoke API |
-| `NATIVE_EXECUTION_CHAIN` | Execution chain |
-| `NATIVE_SEND_EMAIL` | Send email |
-| `NATIVE_SEND_PUSH_NOTIFICATION` | Push notification |
-| `NATIVE_CREATE_TASK` | Create human task |
-| `NATIVE_MANAGE_TASK` | Manage human task |
+| Value | Notes |
+|-------|-------|
+| `NATIVE_PLSQL` | |
+| `NATIVE_FORM_FETCH` | Auto row fetch |
+| `NATIVE_FORM_DML` | Auto Row Processing |
+| `NATIVE_FORM_PROCESS` | Form DML |
+| `NATIVE_FORM_INIT` | |
+| `NATIVE_IG_DML` | |
+| `NATIVE_INVOKE_API` | |
+| `NATIVE_EXECUTION_CHAIN` | |
+| `NATIVE_SEND_EMAIL` | |
+| `NATIVE_SEND_PUSH_NOTIFICATION` | |
+| `NATIVE_CREATE_TASK` | Human task |
+| `NATIVE_MANAGE_TASK` | |
 | `NATIVE_CLOSE_WINDOW` | Close dialog |
-| `NATIVE_SESSION_STATE` | Session state |
-| `NATIVE_USER_PREFERENCES` | User preferences |
-| `NATIVE_RESET_PAGINATION` | Reset pagination |
-| `NATIVE_WEB_SERVICE` | Web service |
-| `NATIVE_DOWNLOAD` | Download |
-| `NATIVE_GEOCODING` | Geocoding |
-| `NATIVE_PRINT_REPORT` | Print report |
-| `NATIVE_WORKFLOW` | Workflow |
-| `NATIVE_INVOKE_WF` | Invoke workflow |
-
----
+| `NATIVE_SESSION_STATE` | |
+| `NATIVE_USER_PREFERENCES` | |
+| `NATIVE_RESET_PAGINATION` | |
+| `NATIVE_WEB_SERVICE` | |
+| `NATIVE_DOWNLOAD` | |
+| `NATIVE_GEOCODING` | |
+| `NATIVE_PRINT_REPORT` | |
+| `NATIVE_WORKFLOW` | |
+| `NATIVE_INVOKE_WF` | |
 
 ## Dynamic Action Types (`p_action`)
 
-| Value | Description |
-|-------|-------------|
-| `NATIVE_SHOW` | Show element |
-| `NATIVE_HIDE` | Hide element |
-| `NATIVE_ENABLE` | Enable |
-| `NATIVE_DISABLE` | Disable |
-| `NATIVE_SET_VALUE` | Set value |
-| `NATIVE_CLEAR` | Clear value |
-| `NATIVE_SET_FOCUS` | Set focus |
-| `NATIVE_REFRESH` | Refresh region/item |
-| `NATIVE_SUBMIT_PAGE` | Submit page |
-| `NATIVE_JAVASCRIPT_CODE` | Execute JavaScript |
+| Value | Notes |
+|-------|-------|
+| `NATIVE_SHOW` | |
+| `NATIVE_HIDE` | |
+| `NATIVE_ENABLE` | |
+| `NATIVE_DISABLE` | |
+| `NATIVE_SET_VALUE` | |
+| `NATIVE_CLEAR` | |
+| `NATIVE_SET_FOCUS` | |
+| `NATIVE_REFRESH` | |
+| `NATIVE_SUBMIT_PAGE` | |
+| `NATIVE_JAVASCRIPT_CODE` | Execute JS |
 | `NATIVE_EXECUTE_PLSQL_CODE` | Execute PL/SQL |
-| `NATIVE_ALERT` | Show alert |
-| `NATIVE_CONFIRM` | Show confirmation |
-| `NATIVE_DIALOG_CANCEL` | Cancel dialog |
-| `NATIVE_DIALOG_CLOSE` | Close dialog |
-| `NATIVE_ADD_CLASS` | Add CSS class |
-| `NATIVE_REMOVE_CLASS` | Remove CSS class |
-| `NATIVE_SET_CSS` | Set CSS |
-| `NATIVE_CANCEL_EVENT` | Cancel event |
-| `NATIVE_OPEN_REGION` | Open collapsible region |
-| `NATIVE_CLOSE_REGION` | Close collapsible region |
-| `NATIVE_DOWNLOAD` | Download file |
-| `NATIVE_PRINT_REPORT` | Print report |
-| `NATIVE_OPEN_AI_ASSISTANT` | Open AI Assistant |
-| `NATIVE_GENERATE_TEXT_AI` | Generate text with AI |
-
----
+| `NATIVE_ALERT` | |
+| `NATIVE_CONFIRM` | |
+| `NATIVE_DIALOG_CANCEL` | |
+| `NATIVE_DIALOG_CLOSE` | |
+| `NATIVE_ADD_CLASS` | CSS class |
+| `NATIVE_REMOVE_CLASS` | CSS class |
+| `NATIVE_SET_CSS` | |
+| `NATIVE_CANCEL_EVENT` | |
+| `NATIVE_OPEN_REGION` | Collapsible |
+| `NATIVE_CLOSE_REGION` | Collapsible |
+| `NATIVE_DOWNLOAD` | |
+| `NATIVE_PRINT_REPORT` | |
+| `NATIVE_OPEN_AI_ASSISTANT` | |
+| `NATIVE_GENERATE_TEXT_AI` | |
 
 ## DA Event Types (`p_bind_event_type`)
 
-| Value | Description |
-|-------|-------------|
-| `change` | Value change |
-| `click` | Mouse click |
-| `dblclick` | Double click |
-| `keydown` / `keyup` / `keypress` | Keyboard events |
-| `focus` / `blur` | Focus events |
-| `mouseover` / `mouseout` | Mouse events |
-| `mouseenter` / `mouseleave` | Mouse enter/leave |
-| `ready` | Page ready (load) |
+| Value | Notes |
+|-------|-------|
+| `change` | |
+| `click` | |
+| `dblclick` | |
+| `keydown` / `keyup` / `keypress` | Keyboard |
+| `focus` / `blur` | |
+| `mouseover` / `mouseout` | |
+| `mouseenter` / `mouseleave` | |
+| `ready` | Page load |
 | `apexbeforerefresh` | Before AJAX refresh |
 | `apexafterrefresh` | After AJAX refresh |
-| `apexbeforepagesubmit` | Before page submit |
-| `apexafterpagesubmit` | After page submit |
-| `apexafterclose dialog` | After dialog close |
-| `apexaftercanceldialog` | After dialog cancel |
-| `apexwindowresized` | Window resized |
-| `apexreadyend` | Page ready end |
-| `custom` | Custom event |
-
----
+| `apexbeforepagesubmit` | |
+| `apexafterpagesubmit` | |
+| `apexafterclose dialog` | |
+| `apexaftercanceldialog` | |
+| `apexwindowresized` | |
+| `apexreadyend` | |
+| `custom` | |
 
 ## DA Triggering Element Types (`p_triggering_element_type`)
 
-| Value | Description |
-|-------|-------------|
-| `ITEM` | Page item |
-| `REGION` | Region |
-| `BUTTON` | Button |
-| `JQUERY_SELECTOR` | jQuery selector |
-| `JAVASCRIPT_EXPRESSION` | JavaScript expression |
-| `COLUMN` | Region column |
-| `DOM_OBJECT` | DOM object |
-| `TRIGGERING_ELEMENT` | (self) |
-
----
+`ITEM` | `REGION` | `BUTTON` | `JQUERY_SELECTOR` | `JAVASCRIPT_EXPRESSION` | `COLUMN` | `DOM_OBJECT` | `TRIGGERING_ELEMENT`
 
 ## Page Mode (`p_page_mode`)
 
-| Value | Description |
-|-------|-------------|
-| `NORMAL` | Standard page |
-| `MODAL DIALOG` | Modal dialog |
-| `NON-MODAL DIALOG` | Non-modal dialog |
-
----
+`NORMAL` | `MODAL DIALOG` | `NON-MODAL DIALOG`
 
 ## Button Action (`p_button_action`)
 
-| Value | Description |
-|-------|-------------|
-| `SUBMIT` | Submit page |
-| `REDIRECT_URL` | Redirect to URL |
-| `REDIRECT_PAGE` | Redirect to page |
-| `DEFINED_BY_DA` | Defined by dynamic action |
-
----
+`SUBMIT` | `REDIRECT_URL` | `REDIRECT_PAGE` | `DEFINED_BY_DA`
 
 ## Process Points (`p_process_point`)
 
-| Value | Description |
-|-------|-------------|
-| `BEFORE_HEADER` | Before page header |
-| `AFTER_HEADER` | After page header |
-| `BEFORE_FOOTER` | Before page footer |
-| `ON_SUBMIT_BEFORE_COMPUTATION` | Before computations |
-| `AFTER_SUBMIT` | After submit |
-| `ON_DEMAND` | On demand (AJAX) |
-
----
+| Value |
+|-------|
+| `BEFORE_HEADER` |
+| `AFTER_HEADER` |
+| `BEFORE_FOOTER` |
+| `ON_SUBMIT_BEFORE_COMPUTATION` |
+| `AFTER_SUBMIT` |
+| `ON_DEMAND` -- AJAX |
 
 ## Branch Points (`p_branch_point`)
 
-| Value | Description |
-|-------|-------------|
-| `BEFORE_HEADER` | Before header |
-| `BEFORE_PROCESSING` | Before processing |
-| `BEFORE_VALIDATION` | Before validations |
-| `AFTER_PROCESSING` | After processing |
-
----
+`BEFORE_HEADER` | `BEFORE_PROCESSING` | `BEFORE_VALIDATION` | `AFTER_PROCESSING`
 
 ## Branch Types (`p_branch_type`)
 
-| Value | Description |
-|-------|-------------|
-| `REDIRECT_URL` | Redirect to URL |
-| `BRANCH_TO_PAGE_ACCEPT` | Branch to page (accept) |
-| `BRANCH_TO_PAGE_IDENT` | Branch to page (identified) |
-| `PLSQL_PROCEDURE` | PL/SQL procedure |
-
----
+`REDIRECT_URL` | `BRANCH_TO_PAGE_ACCEPT` | `BRANCH_TO_PAGE_IDENT` | `PLSQL_PROCEDURE`
 
 ## Validation Types (`p_validation_type`)
 
-| Value | Description |
-|-------|-------------|
-| `NOT_NULL` | Not null |
-| `ITEM_IS_DATE` | Item is date |
-| `ITEM_IS_NUMERIC` | Item is numeric |
-| `ITEM_MATCHES_REGULAR_EXPRESSION` | Matches regex |
-| `ITEM_IN_VALIDATION_CONTAINS_NO_SPACES` | No spaces |
-| `ITEM_IS_ALPHANUMERIC` | Alphanumeric |
-| `SQL_EXPRESSION` | SQL expression |
-| `PLSQL_EXPRESSION` | PL/SQL expression |
-| `PLSQL_ERROR` | PL/SQL error text |
-| `FUNC_BODY_RETURNING_BOOLEAN` | Function body → boolean |
-| `FUNC_BODY_RETURNING_ERR_TEXT` | Function body → error text |
-| `ITEM_REQUIRED` | Item required |
-
----
+| Value |
+|-------|
+| `NOT_NULL` |
+| `ITEM_IS_DATE` |
+| `ITEM_IS_NUMERIC` |
+| `ITEM_MATCHES_REGULAR_EXPRESSION` |
+| `ITEM_IN_VALIDATION_CONTAINS_NO_SPACES` |
+| `ITEM_IS_ALPHANUMERIC` |
+| `SQL_EXPRESSION` |
+| `PLSQL_EXPRESSION` |
+| `PLSQL_ERROR` |
+| `FUNC_BODY_RETURNING_BOOLEAN` |
+| `FUNC_BODY_RETURNING_ERR_TEXT` |
+| `ITEM_REQUIRED` |
 
 ## Data Types (`p_data_type`)
 
-| Value | Description |
-|-------|-------------|
-| `VARCHAR2` | Character string |
-| `NUMBER` | Numeric |
-| `DATE` | Date |
-| `TIMESTAMP` | Timestamp |
-| `TIMESTAMP_TZ` | Timestamp with time zone |
-| `TIMESTAMP_LTZ` | Timestamp with local time zone |
-| `CLOB` | Character large object |
-| `BLOB` | Binary large object |
-| `SDO_GEOMETRY` | Spatial geometry |
-
----
+`VARCHAR2` | `NUMBER` | `DATE` | `TIMESTAMP` | `TIMESTAMP_TZ` | `TIMESTAMP_LTZ` | `CLOB` | `BLOB` | `SDO_GEOMETRY`
 
 ## Source Types (`p_source_type`)
 
-| Value | Description |
-|-------|-------------|
-| `ALWAYS_NULL` | Always null |
-| `STATIC` | Static value |
-| `ITEM` | Item value |
-| `SQL_EXPRESSION` | SQL expression |
-| `PLSQL_EXPRESSION` | PL/SQL expression |
-| `PLSQL_FUNCTION_BODY` | PL/SQL function body |
-| `DB_COLUMN` | Database column |
-| `REGION_SOURCE_COLUMN` | Region source column |
-| `PREFERENCE` | User preference |
-| `REQUEST` | Request value |
-| `FACET_COLUMN` | Faceted search column |
-
----
+| Value |
+|-------|
+| `ALWAYS_NULL` |
+| `STATIC` |
+| `ITEM` |
+| `SQL_EXPRESSION` |
+| `PLSQL_EXPRESSION` |
+| `PLSQL_FUNCTION_BODY` |
+| `DB_COLUMN` |
+| `REGION_SOURCE_COLUMN` |
+| `PREFERENCE` |
+| `REQUEST` |
+| `FACET_COLUMN` |
 
 ## Query Types (`p_query_type`)
 
-| Value | Description |
-|-------|-------------|
-| `SQL` | SQL query |
-| `TABLE` | Table/view |
-| `FUNC_BODY_RETURNING_SQL` | Function returning SQL |
-
----
+`SQL` | `TABLE` | `FUNC_BODY_RETURNING_SQL`
 
 ## Location (`p_location`)
 
-| Value | Description |
-|-------|-------------|
-| `LOCAL` | Local database |
-| `REMOTE` | Remote database |
-| `WEB_SOURCE` | REST data source |
-
----
+`LOCAL` | `REMOTE` | `WEB_SOURCE`
 
 ## Protection Level (`p_protection_level`)
 
@@ -314,34 +234,17 @@ Comprehensive enumeration of all valid parameter values from APEX 24.2 source.
 | `B` | Arguments must have checksum |
 | `C` | No arguments allowed |
 | `D` | No URL access |
-| `S` | Checksum required - session level |
-| `U` | Checksum required - user level |
-| `P` | Checksum required - application level |
-
----
+| `S` | Checksum required - session |
+| `U` | Checksum required - user |
+| `P` | Checksum required - application |
 
 ## Error Display Location (`p_error_display_location`)
 
-| Value | Description |
-|-------|-------------|
-| `ON_ERROR_PAGE` | On error page |
-| `INLINE_WITH_FIELD` | Inline with field |
-| `INLINE_WITH_FIELD_AND_NOTIFICATION` | Inline with field and notification |
-| `INLINE_IN_NOTIFICATION` | Inline in notification |
-
----
+`ON_ERROR_PAGE` | `INLINE_WITH_FIELD` | `INLINE_WITH_FIELD_AND_NOTIFICATION` | `INLINE_IN_NOTIFICATION`
 
 ## IG Edit Operations (`p_edit_operations`)
 
-| Value | Description |
-|-------|-------------|
-| `i` | Insert |
-| `u` | Update |
-| `d` | Delete |
-| `i:u` | Insert + Update |
-| `i:u:d` | Insert + Update + Delete |
-
----
+`i` | `u` | `d` | `i:u` | `i:u:d`
 
 ## Chart Types (`p_chart_type`)
 

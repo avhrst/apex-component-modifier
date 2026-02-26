@@ -1,12 +1,10 @@
 # Example: Add a Select List Item to a Page
 
-Complete patching flow from export to import for adding a new `P10_STATUS` select list item.
+Complete patching flow for adding `P10_STATUS` select list item.
 
----
+## Before (original from `page_00010.sql`)
 
-## Before (original export snippet from `page_00010.sql`)
-
-The page has one region ("Details", ID `4937364850118364`) with one existing item.
+Page has region "Details" (ID `4937364850118364`) with one existing item.
 
 ```sql
 begin
@@ -34,14 +32,14 @@ end;
 /
 ```
 
-## Patch (unified diff)
+## Patch (diff)
 
 ```diff
 --- a/f113/application/pages/page_00010.sql
 +++ b/f113/application/pages/page_00010.sql
-@@ manifest section — add new item to the list @@
+@@ manifest section -- add new item @@
 +--   ...   P10_STATUS
-@@ after the P10_NAME create_page_item end;/ block @@
+@@ after P10_NAME block @@
 +begin
 +wwv_flow_imp_page.create_page_item(
 + p_id=>wwv_flow_imp.id(4937365100000001)
@@ -69,17 +67,17 @@ end;
 +/
 ```
 
-## Key decisions in this patch
+## Key decisions
 
 | Decision | Reasoning |
 |----------|-----------|
-| ID `4937365100000001` | Max existing ID was `4937365012648365`; picked a value above it |
-| `p_item_sequence=>20` | Existing item is at 10; next logical gap |
-| `p_item_plug_id` matches region | Same region `4937364850118364` as the existing item |
-| `p_named_lov=>'STATUS_LOV'` | References LOV by name (string), not by ID |
-| `p_field_template` reuses existing | Same label template as other items on the page |
+| ID `4937365100000001` | Max existing was `4937365012648365`; picked above it |
+| `p_item_sequence=>20` | Existing at 10; next logical gap |
+| `p_item_plug_id` matches region | Same region `4937364850118364` |
+| `p_named_lov=>'STATUS_LOV'` | References LOV by name (string), not ID |
+| `p_field_template` reused | Same label template as other items |
 | `p_display_as=>'NATIVE_SELECT_LIST'` | Valid value from `valid_values.md` |
 
 ## After import
 
-Verify by re-exporting page 10 and confirming P10_STATUS appears with correct attributes.
+Re-export page 10, confirm P10_STATUS appears with correct attributes.

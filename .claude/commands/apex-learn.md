@@ -1,162 +1,139 @@
 ---
-description: Learn patterns from an existing APEX app — exports all components, analyzes them, and generates annotated pattern files for future patching
+description: Learn patterns from an existing APEX app -- exports all components, analyzes conventions, generates pattern files for future patching
 argument-hint: "[app-id]"
 ---
 
-Learn the patterns of APEX application `$ARGUMENTS` (or `$APEX_APP_ID` if no argument given) by exporting and analyzing all its components. Generate annotated markdown pattern files that capture the app's conventions.
+Learn patterns of APEX application `$ARGUMENTS` (or `$APEX_APP_ID`) by exporting and analyzing all components. Generate pattern files in `.claude/skills/apex-component-modifier/app-patterns/`.
 
-**Output directory:** `.claude/skills/apex-component-modifier/app-patterns/`
+## Before you start
+
+1. Check `global-patterns/` -- these are reusable cross-app patterns. App-patterns should capture app-specific conventions only.
+2. If `app-patterns/` exists, this run overwrites it (fresh snapshot).
 
 ## Workflow
 
 ### 1. Connect and export
 
-1. Connect to the database using `$SQLCL_CONNECTION`.
-2. Determine the app ID: use `$ARGUMENTS` if provided, otherwise `$APEX_APP_ID`.
-3. Run a full split export: `apex export -applicationid <APP_ID> -split`.
-4. Confirm the export directory exists and list its contents.
+1. Connect using `$SQLCL_CONNECTION`.
+2. App ID: `$ARGUMENTS` if provided, else `$APEX_APP_ID`.
+3. Run: `apex export -applicationid <APP_ID> -split`.
+4. Confirm export directory exists, list top-level structure.
 
-### 2. Discover exported files
+### 2. Build template ID map
 
-1. Find all page files: `application/pages/page_*.sql`
-2. Find shared component files: `application/shared_components/**/*.sql`
-3. Find the application-level files: `application/set_environment.sql`, `application/create_application.sql`
-4. Report how many pages and shared component files were found.
+Read template files under `application/shared_components/user_interface/templates/` (region, label, button, page, report, list). Extract name + `wwv_flow_imp.id(...)` value. Store mapping for resolving template references.
 
-### 3. Generate page pattern files
+### 3. Scan all pages
 
-For **each page file**, read the full SQL and produce a markdown file named `page_NNNNN.md` in the `app-patterns/` directory. Each file must contain:
+Read every `application/pages/page_*.sql`. Collect (don't generate files yet):
+- Page number, name, mode, alias, group
+- Component counts: regions, items, buttons, processes, DAs, validations, branches
+- Region types, template IDs (resolve to names), item naming pattern
+- Sequence gap pattern, LOV references, process types, DA event/action types
 
-#### Header
-```
-# Page <N> — <Page Name>
+### 4. Generate conventions.md
 
-**Mode:** <mode> | **Alias:** <alias> | **Group:** <group>
-```
-
-#### Regions table
-| # | Name | Type | Template | Source | Seq |
-|---|------|------|----------|--------|-----|
-
-Extract from `wwv_flow_imp_page.create_page_plug(...)` calls:
-- Name: `p_plug_name`
-- Type: `p_plug_source_type` (e.g., `NATIVE_SQL_REPORT`, `NATIVE_FORM`)
-- Template: `p_plug_template` — resolve the `wwv_flow_imp.id(...)` value and note the template name from context if available
-- Source: `p_plug_source` or `p_query_table_name` or `p_region_source`
-- Seq: `p_display_sequence`
-
-#### Items table
-| Name | Type | Region | Source Column | Display As | Template |
-|------|------|--------|--------------|------------|----------|
-
-Extract from `wwv_flow_imp_page.create_page_item(...)` calls:
-- Name: `p_name`
-- Type: `p_data_type`
-- Region: `p_item_plug_id` — cross-reference to region name
-- Source Column: `p_source` or `p_source_data_type` context
-- Display As: `p_display_as` (e.g., `NATIVE_TEXT_FIELD`, `NATIVE_SELECT_LIST`)
-- Template: `p_field_template` — note the `wwv_flow_imp.id(...)` value
-
-#### Buttons table
-| Name | Region | Action | Position | Seq |
-|------|--------|--------|----------|-----|
-
-Extract from `wwv_flow_imp_page.create_page_button(...)` calls.
-
-#### Processes table
-| Name | Type | Point | Seq | Condition |
-|------|------|-------|-----|-----------|
-
-Extract from `wwv_flow_imp_page.create_page_process(...)` calls.
-
-#### Dynamic Actions table
-| Event | Name | Condition | Actions |
-|-------|------|-----------|---------|
-
-Extract from `wwv_flow_imp_page.create_page_da_event(...)` and related `create_page_da_action(...)` calls.
-
-#### Validations, Computations, Branches
-Include these sections only if the page has them. Use similar tabular format.
-
-#### Key Patterns section
-Summarize the reusable conventions found on this page:
-- Label template IDs with their resolved names (e.g., `wwv_flow_imp.id(1859094942498559411)` = "Optional - Floating")
-- Region template IDs with names
-- Item naming convention (e.g., `P<page>_<COLUMN_NAME>`)
-- Sequence gap pattern (e.g., increments of 10)
-- Any page-specific LOV references
-
-#### Representative SQL Blocks
-Include 1-2 representative `wwv_flow_imp_page.create_*` blocks verbatim (the most complex region and one item) so future patching can copy the exact style. Wrap in fenced SQL code blocks with a heading like `### Region: <name>`.
-
-### 4. Generate shared_components.md
-
-Read all files under `application/shared_components/` and produce a single `shared_components.md` in `app-patterns/`:
-
-#### LOVs
-| Name | Type | Query/Static Values (truncated) |
-|------|------|---------------------------------|
-
-#### Authorization Schemes
-| Name | Scheme Type | Description |
-|------|-------------|-------------|
-
-#### Templates in Use
-List region templates, label templates, button templates, and page templates found in the export — just the IDs and names:
-| Category | ID (`wwv_flow_imp.id(...)`) | Name |
-|----------|-----------------------------|------|
-
-#### Authentication Scheme
-Note the scheme name and type.
-
-#### Navigation
-Lists, breadcrumbs, navbar entries — name and target.
-
-### 5. Generate catalog.md
-
-Create `catalog.md` in `app-patterns/` as the master index:
+Consolidate step 3 into:
 
 ```
-# App Patterns Catalog — App <APP_ID>
+# App <APP_ID> Conventions
 
-**Generated:** <today's date> | **App:** <APP_ID> | **Workspace:** $APEX_WORKSPACE
+## Template IDs
+### Region Templates
+| ID | Name | Usage Count |
+|----|------|-------------|
 
-## Pages
+### Label Templates
+| ID | Name | Usage Count |
+|----|------|-------------|
 
-| File | Page | Name | Regions | Items | Buttons | Processes | DAs |
-|------|------|------|---------|-------|---------|-----------|-----|
-| page_00001.md | 1 | Home | 3 | 0 | 0 | 1 | 0 |
-...
+### Button Templates
+| ID | Name | Usage Count |
+|----|------|-------------|
 
-## Shared Components
+### Page Templates
+| ID | Name | Usage Count |
+|----|------|-------------|
 
+## Naming Conventions
+- Items: `P<page>_<COLUMN_NAME>` (confirmed across N pages)
+- Buttons: <pattern>
+- Regions: <pattern>
+
+## Sequence Style
+- Increment by: <most common>
+- Exceptions: <deviations>
+
+## Common LOV References
+| LOV Name | Used On Pages | Type |
+|----------|---------------|------|
+
+## Process Patterns
+- Form fetch/DML/Custom PL/SQL: <patterns>
+
+## Dynamic Action Patterns
+- Frequent events, action types, combos: <with counts>
+
+## Condition Patterns
+- Common types and expressions
+```
+
+### 5. Generate shared_components.md
+
+Read `application/shared_components/` and produce tables for:
+- **LOVs:** Name, Type, Query (truncated)
+- **Authorization Schemes:** Name, Type, Description
+- **Authentication:** Scheme name and type
+- **Navigation:** Lists, breadcrumbs, navbar -- name and target
+- **Build Options:** Name, Status, Description
+
+### 6. Generate representative page patterns
+
+Pick **2-5 pages** for diversity (form, report, cards/chart/map; prefer pages with DAs, processes, validations, most variety).
+
+For each, generate `pages/page_NNNNN.md` with:
+- Header: page number, name, mode, alias, group, selection reason
+- Component tables (regions, items, buttons, processes, DAs) with resolved template names
+- Validations/Computations/Branches (only if present)
+- Key patterns: notable template choices, conditions, DA combos, deviations
+- 1-2 representative `wwv_flow_imp_page.create_*` SQL blocks verbatim
+
+### 7. Generate catalog.md
+
+```
+# App Patterns Catalog -- App <APP_ID>
+**Generated:** <date> | **Workspace:** $APEX_WORKSPACE | **Total Pages:** <N>
+
+## Page Inventory
+| Page | Name | Regions | Items | Buttons | Procs | DAs | Region Types |
+|------|------|---------|-------|---------|-------|-----|--------------|
+
+## Detailed Page Patterns
+| File | Page | Why Selected |
+|------|------|--------------|
+
+## App Pattern Files
 | File | Contents |
 |------|----------|
-| shared_components.md | LOVs, auth schemes, templates, navigation |
+| conventions.md | Template IDs, naming, sequences, LOVs, process/DA patterns |
+| shared_components.md | LOVs, auth schemes, navigation, build options |
 
-## Common Patterns
+## Applicable Global Patterns
+| Global Pattern File | Relevant Because |
+|---------------------|------------------|
 
-Summarize the most frequently occurring patterns across all pages:
-- Most common label template (ID + name)
-- Most common region template (ID + name)
-- Item naming convention
-- Sequence numbering style
-- Common LOV references
+If component types have NO global-patterns coverage, list under "## Suggested Global Patterns".
 ```
 
-### 6. Report
+### 8. Report
 
-Print a summary:
-- Number of page pattern files generated
-- Whether shared_components.md was generated
-- Path to catalog.md
-- Any pages that could not be parsed (with reason)
+Print: pages scanned, page files generated, path to catalog.md, global-pattern matches, uncovered component types, unparseable pages.
 
-## Important rules
+## Rules
 
-- This is a **read-only analysis** — do NOT modify any APEX components or database objects.
-- Do NOT import anything back into APEX.
-- Overwrite any previously generated pattern files in `app-patterns/` (treat each run as a fresh snapshot).
-- If a page file is too large to read in one pass, read it in chunks.
-- If the export fails, report the error and stop — do not attempt to generate patterns from stale/missing files.
-- Clean up the export directory after pattern generation is complete.
+- **Read-only** -- do NOT modify APEX components or DB objects, do NOT import.
+- Overwrite `app-patterns/` each run.
+- Read large page files in chunks if needed.
+- If export fails, report error and stop.
+- Always resolve template IDs to names.
+- Keep export directory after generation.
