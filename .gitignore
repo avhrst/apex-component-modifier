@@ -2,4 +2,5 @@
 .claude/*
 !.claude/skills/
 !.claude/commands/
+.claude/skills/apex-component-modifier/app-patterns/
 !.claude/settings.json

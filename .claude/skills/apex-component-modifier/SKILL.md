@@ -55,11 +55,12 @@ apex export -applicationid <APP_ID> -split -dir <workdir>/f<APP_ID> -expComponen
 ```
 Confirm `install_component.sql` (partial) or `install.sql` (full) exists.
 
-### 4) Load `apex_imp` documentation
+### 4) Load documentation and app patterns
 1. `references/apex_imp/README.md` + `apex_imp.md` (always)
 2. `imp_page.md` (page components) or `imp_shared.md` (shared components) — as needed
 3. `tools/patching_guidelines.md` + `valid_values.md` (always)
 4. `app_install.md` (if importing to different environment)
+5. `app-patterns/catalog.md` — if present, load relevant component pattern files (e.g., `cards_region.md`, `card_media.md`) to match the app's existing conventions for template IDs, naming, and structure
 
 ### 5) Plan the change set
 Split into DB changes (DDL/DML/PLSQL) and APEX patches. Use `templates/patch_plan.md`. Order: DB first → patch export → import.
