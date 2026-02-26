@@ -14,6 +14,7 @@ The skill reads these files at workflow step 4 to guide safe modifications of ex
 | `valid_values.md` | Comprehensive enumeration of all valid parameter values: region types, item types, process types, DA action types, event types, data types, source types, protection levels, etc. |
 | `app_install.md` | `apex_application_install` — pre-import configuration: set_workspace_id, set_application_id, set_schema, generate_offset, etc. |
 | `export_api.md` | `apex_export` — export API: get_application (split, components, types), get_workspace, zip/unzip |
+| `../examples/add_select_list_item.md` | Complete end-to-end patching example: adding a select list item |
 
 ## Quick package reference
 
@@ -35,3 +36,23 @@ The skill reads these files at workflow step 4 to guide safe modifications of ex
 - Current version constants: `c_release_date_str = '2024.11.30'`, `c_current = 20241130`
 - Component creation order matters due to parent-child relationships (page → region → items/buttons)
 - All export files are UTF-8 encoded with `set define off` at the top
+
+## Version Compatibility
+
+This documentation is based on **APEX 24.2** (`APEX_240200`). Key compatibility notes:
+
+| Feature / API | Introduced In | Notes |
+|---------------|---------------|-------|
+| `wwv_flow_imp_page` / `wwv_flow_imp_shared` | APEX 21.2 | Replaced frozen `wwv_flow_imp` for new components |
+| `apex_string` (public synonym) | APEX 5.1 | Internal: `wwv_flow_string` |
+| `apex_export.get_application` with `-split` | APEX 5.0 | SQLcl `apex export -split` |
+| `-expComponents` flag | APEX 19.1+ (SQLcl 19.1) | Partial component export |
+| AI Builder integration | APEX 24.1 | `p_ai_*` parameters in create procedures |
+| Map regions | APEX 21.1 | `create_map_region`, `create_map_region_layer` |
+| Cards regions | APEX 21.1 | `create_card` |
+
+**If targeting APEX 23.x or earlier:**
+- Ignore `p_ai_*` parameters (AI Builder) — they will be silently skipped on import.
+- Map and Cards regions are available from 21.1+.
+- Core patching workflow is identical; only parameter availability differs.
+- When in doubt, export from the target APEX version first to see which parameters it produces.
