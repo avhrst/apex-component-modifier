@@ -2,6 +2,18 @@
 
 Source: APEX 24.2 (`APEX_240200`). Frozen as of APEX 21.2 — new components use `wwv_flow_imp_page` and `wwv_flow_imp_shared`.
 
+## Table of Contents
+
+- [1. Package Overview](#1-package-overview) — package info, successor packages
+- [2. Constants](#2-constants) — version constants, other constants
+- [3. Global Variables](#3-global-variables) — `g_id_offset`, `g_mode`, `g_raise_errors`
+- [4. Key Functions and Procedures](#4-key-functions-and-procedures) — `id()`, `set_version`, `import_begin`/`import_end`, `component_begin`/`component_end`, import modes
+- [5. Split Export Directory Structure](#5-split-export-directory-structure) — full directory layout, page file naming
+- [6. File Format Rules](#6-file-format-rules) — block structure, component ordering, manifest block, long strings, escaping
+- [7. ID Management](#7-id-management) — export file patching IDs, programmatic creation IDs
+- [8. Current Context Functions (`wwv_flow_imp_page`)](#8-current-context-functions-wwv_flow_imp_page) — `current_page_id`, `current_region_id`, `current_worksheet_id`
+- [9. Execution Context Requirements](#9-execution-context-requirements) — workspace/application context setup
+
 ---
 
 ## 1. Package Overview

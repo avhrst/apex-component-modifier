@@ -4,6 +4,23 @@ Source: APEX 24.2 (`APEX_240200`). Created 09/07/2021 by cczarski.
 
 Primary package for creating all APEX page components during import and AI Builder operations.
 
+## Table of Contents
+
+- [Page](#page) — `create_page`, `create_page_group`, `update_page`, `remove_page`
+- [Regions](#regions) — `create_page_plug`, `create_report_columns`, `create_region_column`
+- [Page Items](#page-items) — `create_page_item`
+- [Buttons](#buttons) — `create_page_button`
+- [Processes](#processes) — `create_page_process`
+- [Validations](#validations) — `create_page_validation`
+- [Computations](#computations) — `create_page_computation`
+- [Branches](#branches) — `create_page_branch`
+- [Dynamic Actions](#dynamic-actions) — `create_page_da_event`, `create_page_da_action`
+- [Interactive Report](#interactive-report) — `create_worksheet`, `create_worksheet_column`, `create_worksheet_rpt`
+- [Interactive Grid](#interactive-grid) — `create_interactive_grid`, `create_ig_report`, `create_ig_report_view`, `create_ig_report_column`
+- [Charts](#charts) — `create_jet_chart`, `create_jet_chart_axis`, `create_jet_chart_series`
+- [Map / Cards / Tree / Search](#map--cards--tree--search) — `create_map_region`, `create_map_region_layer`, `create_card`, `create_card_action`
+- [Utility Procedures](#utility-procedures) — `set_calling_version`, IG/IR preservation, background execution preservation
+
 ---
 
 ## Page

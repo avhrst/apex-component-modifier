@@ -95,13 +95,15 @@ If inputs are still incomplete after applying defaults, resolve missing details 
    - component SQL files (e.g., `application/pages/page_00010.sql`)
 
 ### 4) Load local `apex_imp` documentation (progressive disclosure)
-1. Read `references/apex_imp/README.md` and `references/apex_imp/apex_imp.md`.
-2. Extract key rules relevant to safe modifications:
-   - ID generation / ID offset practices
-   - dependency handling
-   - recommended patterns for importing and updating components
-3. Treat the local `apex_imp` docs as the source of truth when there is ambiguity.
-4. Consult `tools/patching_guidelines.md` for patch strategy rules.
+1. **Always read first:** `references/apex_imp/README.md` (quick reference index).
+2. **Always read:** `references/apex_imp/apex_imp.md` (core import engine, ID system, file format).
+3. **Read conditionally based on the component type:**
+   - Page items, regions, buttons, DAs, processes, IR, IG, charts, maps, cards → read `references/apex_imp/imp_page.md`
+   - LOVs, authorization schemes, authentication, lists, templates, build options, static files → read `references/apex_imp/imp_shared.md`
+4. **Always read:** `tools/patching_guidelines.md` for patch strategy rules.
+5. **Always read:** `references/apex_imp/valid_values.md` for parameter choices.
+6. **Read if importing to a different environment:** `references/apex_imp/app_install.md`.
+7. **Read if needing export API details:** `references/apex_imp/export_api.md`.
 
 ### 5) Plan the change set (DB + APEX export patch)
 1. Split the user request into:
