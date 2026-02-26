@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Describe page 1 of my APEX app",
+    "expected_skill": "apex-component-modifier",
+    "expected_actions": ["export", "read"],
+    "notes": "Should trigger the skill and export page 1 using default settings"
+  },
+  {
+    "prompt": "Add a text field P5_EMAIL to page 5 in the Details region",
+    "expected_skill": "apex-component-modifier",
+    "expected_actions": ["export", "patch", "import"],
+    "notes": "Full workflow: export page 5, add item, import back"
+  },
+  {
+    "prompt": "Change the label of P10_NAME from 'Name' to 'Full Name'",
+    "expected_skill": "apex-component-modifier",
+    "expected_actions": ["export", "patch", "import"],
+    "notes": "Simple parameter modification on existing component"
+  },
+  {
+    "prompt": "Create a new LOV called PRIORITY_LOV with values High, Medium, Low",
+    "expected_skill": "apex-component-modifier",
+    "expected_actions": ["export", "patch", "import"],
+    "notes": "Shared component creation — should create new file"
+  },
+  {
+    "prompt": "Remove the P10_NOTES item from page 10",
+    "expected_skill": "apex-component-modifier",
+    "expected_actions": ["export", "patch", "import"],
+    "notes": "Component removal — must check cross-references"
+  }
+]

@@ -39,6 +39,8 @@ If `sql` is not on your PATH, use the full path:
 | macOS   | `/usr/local/bin/sql`                 |
 | Windows | `C:\Users\<you>\Oracle\sqlcl\bin\sql` |
 
+> **Note:** This repo includes a `.mcp.json` file with the SQLcl MCP config. If you already have a `.mcp.json` in your project, merge the `sqlcl` entry into your existing config instead of overwriting it. The `${SQLCL_PATH:-sql}` syntax falls back to `sql` if `SQLCL_PATH` is not set.
+
 ### 3. Create a saved SQLcl connection
 
 Open SQLcl and save a connection to your APEX database:
