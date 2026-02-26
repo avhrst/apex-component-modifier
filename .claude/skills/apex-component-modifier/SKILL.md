@@ -151,12 +151,34 @@ If inputs are still incomplete after applying defaults, resolve missing details 
    - import log summary (success/failure, key warnings)
 
 ## Error handling playbook
-- Export missing files:
-  - verify `-dir`, permissions, correct APP_ID, and connection/workspace context.
-- Import fails due to ID collisions:
-  - revisit `apex_imp` ID/offset guidance; ensure installation context is correct.
-- DB changes break compilation:
-  - fix/rollback DB scripts before re-importing the APEX component.
+
+### Before any changes — create a baseline
+- **Git baseline (mandatory if in a git repo):**
+  ```
+  git add -A && git commit -m "baseline: pre-modification snapshot"
+  ```
+- Record the current APEX component state by exporting before changes.
+
+### Recovery procedures
+
+| Failure | Recovery |
+|---------|----------|
+| **Export missing files** | Verify `-dir`, permissions, correct APP_ID, and connection/workspace context. |
+| **DB script fails** | Fix the script. If partially applied, reverse with `DROP`/`ALTER` or restore from version control. Re-run after fix. |
+| **Patch produces invalid file** | `git checkout -- <file>` to restore the exported original. Re-patch from clean state. |
+| **Import fails — ID collision** | Revisit `apex_imp` ID/offset guidance. Ensure `apex_application_install` context is correct. Regenerate IDs if needed. |
+| **Import fails — compilation error** | Check `show errors` via SQLcl MCP. Fix DB objects first, then re-import. |
+| **Import succeeds but component is broken** | Re-import the original baseline export: `@<workdir>/f<APP_ID>/install_component.sql` from the pre-change export. |
+| **Unknown state after failed import** | Re-export the component from APEX (it still holds the last successful import). Diff against your patched file to see what was applied. |
+
+### Logging
+- Save all SQLcl import output to a log file in the working directory (e.g., `import_log.txt`).
+- On failure, present the log to the user before attempting recovery.
+
+### Rollback decision tree
+1. Is the git baseline available? → `git checkout -- <files>` and re-import original.
+2. No git? → Re-export the same component from APEX (APEX retains the pre-import state on failure).
+3. DB changes need reversal? → Run explicit `DROP`/`ALTER` scripts (idempotent).
 
 ## Examples
 - `/apex-component-modifier PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV, and create table APP_STATUS if missing.`
