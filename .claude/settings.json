@@ -1,7 +1,7 @@
 {
   "env": {
-    "APEX_WORKSPACE": "DEV_WORKSPACE",
-    "APEX_APP_ID": "113",
-    "SQLCL_CONNECTION": "DEV"
+    "APEX_WORKSPACE": "ai",
+    "APEX_APP_ID": "100",
+    "SQLCL_CONNECTION": "ai"
   }
 }
