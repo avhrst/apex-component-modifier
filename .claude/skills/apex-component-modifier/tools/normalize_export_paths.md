@@ -1,101 +1,55 @@
 # Normalize Export Paths
 
-Guidelines for mapping APEX component selectors to their file paths in a split export.
+Map APEX component selectors to file paths in a split export (`<workdir>/f<APP_ID>/`).
 
 ---
 
-## Path Resolution Rules
+## Pages
 
-Given a working directory `<workdir>/f<APP_ID>/`, resolve component selectors to file paths:
+`PAGE:<N>` → `application/pages/page_%05d.sql` (zero-padded to 5 digits)
 
-### Pages
-
-| Selector | File Path |
-|----------|-----------|
+| Selector | File |
+|----------|------|
+| `PAGE:0` | `application/pages/page_00000.sql` (Global Page) |
 | `PAGE:1` | `application/pages/page_00001.sql` |
 | `PAGE:10` | `application/pages/page_00010.sql` |
-| `PAGE:100` | `application/pages/page_00100.sql` |
-| `PAGE:0` (Global Page) | `application/pages/page_00000.sql` |
 
-**Rule:** zero-pad the page number to 5 digits: `page_%05d.sql`
+## Shared Components
 
-### Shared Components — LOVs
-
-| Selector | File Path |
-|----------|-----------|
+| Selector | Path |
+|----------|------|
 | `LOV:<id>` | `application/shared_components/user_interface/lovs/<lov_name>.sql` |
-
-LOV files are named by the LOV name (lowercased, spaces → underscores). Use `Glob` to find the exact file if the name is unknown.
-
-### Shared Components — Authorization Schemes
-
-| Selector | File Path |
-|----------|-----------|
 | `AUTHORIZATION:<id>` | `application/shared_components/security/authorizations/<name>.sql` |
-
-### Shared Components — Lists (Navigation)
-
-| Selector | File Path |
-|----------|-----------|
 | `LIST:<id>` | `application/shared_components/navigation/lists/<name>.sql` |
-
-### Shared Components — Templates
-
-| Selector | File Path |
-|----------|-----------|
 | `TEMPLATE:<id>` | `application/shared_components/user_interface/templates/<type>/<name>.sql` |
+| `PLUGIN:<id>` | `application/shared_components/plugins/<plugin_type>_<name>.sql` |
 
 Template types: `region/`, `page/`, `button/`, `label/`, `list/`, `report/`, `popup_lov/`, `calendar/`, `breadcrumb/`
 
-### Shared Components — Plugins
+LOV files are named by LOV name (lowercased, spaces → underscores). Use `Glob` if name is unknown.
 
-| Selector | File Path |
-|----------|-----------|
-| `PLUGIN:<id>` | `application/shared_components/plugins/<plugin_type>_<name>.sql` |
+## Fixed-Path Components
 
-### Shared Components — Other
+| Category | File |
+|----------|------|
+| Application Items | `shared_components/logic/application_items.sql` |
+| Application Processes | `shared_components/logic/application_processes.sql` |
+| Application Computations | `shared_components/logic/application_computations.sql` |
+| Application Settings | `shared_components/logic/application_settings.sql` |
+| Build Options | `shared_components/logic/build_options.sql` |
+| Authentication | `shared_components/security/authentication/authentication.sql` |
+| Breadcrumbs | `shared_components/navigation/breadcrumbs/breadcrumb.sql` |
+| Themes | `shared_components/user_interface/themes/theme_<n>.sql` |
+| Messages | `shared_components/globalization/messages.sql` |
 
-| Category | Directory |
-|----------|-----------|
-| Application Items | `application/shared_components/logic/application_items.sql` |
-| Application Processes | `application/shared_components/logic/application_processes.sql` |
-| Application Computations | `application/shared_components/logic/application_computations.sql` |
-| Application Settings | `application/shared_components/logic/application_settings.sql` |
-| Build Options | `application/shared_components/logic/build_options.sql` |
-| Authentication | `application/shared_components/security/authentication/authentication.sql` |
-| Breadcrumbs | `application/shared_components/navigation/breadcrumbs/breadcrumb.sql` |
-| Shortcuts | `application/shared_components/user_interface/shortcuts/<name>.sql` |
-| Themes | `application/shared_components/user_interface/themes/theme_<n>.sql` |
-| Messages | `application/shared_components/globalization/messages.sql` |
-| Web Sources | `application/shared_components/web_sources/<name>.sql` |
+All paths relative to `application/`.
 
----
+## Discovery
 
-## Discovery Commands
+When exact file name is unknown: `Glob: application/shared_components/user_interface/lovs/*.sql` or `Grep: "p_name=>'STATUS_LOV'" in application/shared_components/`
 
-When the exact file name is unknown, use these approaches:
+## Install Script
 
-```
-# Find all LOV files
-Glob: application/shared_components/user_interface/lovs/*.sql
-
-# Find a specific page
-Glob: application/pages/page_00010.sql
-
-# Search for a component by name
-Grep: "p_name=>'STATUS_LOV'" in application/shared_components/
-
-# List all pages
-Glob: application/pages/page_*.sql
-```
-
----
-
-## Install Script References
-
-After patching, verify the install script references the correct files:
-
-- **Full export:** `install.sql` uses `@@application/pages/page_00010.sql`
-- **Partial export:** `install_component.sql` references only the exported component files
-
-If you added a **new** shared component file that wasn't in the original export, you must also add a corresponding `@@` line to the install script.
+- Full export: `install.sql` uses `@@application/pages/page_00010.sql`
+- Partial: `install_component.sql` references only exported files
+- New shared component files must be added as `@@` lines in the install script before dependent pages

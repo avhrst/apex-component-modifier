@@ -1,58 +1,48 @@
 # apex_imp Reference Documentation
 
-Reference documentation for the Oracle APEX internal import packages, derived from the APEX 24.2 source.
-
-The skill reads these files at workflow step 4 to guide safe modifications of exported APEX component files.
+APEX 24.2 import package reference. Read at workflow step 4 to guide safe modifications.
 
 ## Files
 
-| File | Description |
-|------|-------------|
-| `apex_imp.md` | Core import infrastructure: `wwv_flow_imp` (import_begin/end, component_begin/end, id()), split export directory structure, file format rules, ID offset system |
-| `imp_page.md` | `wwv_flow_imp_page` — all page component procedures: create_page, create_page_plug (regions), create_page_item, create_page_button, create_page_process, create_page_da_event/action, create_page_validation, create_page_computation, create_page_branch, IR/IG/Chart/Map/Cards procedures |
-| `imp_shared.md` | `wwv_flow_imp_shared` — shared component procedures: LOVs, authorization schemes, authentication, lists, templates, build options, static files |
-| `valid_values.md` | Comprehensive enumeration of all valid parameter values: region types, item types, process types, DA action types, event types, data types, source types, protection levels, etc. |
-| `app_install.md` | `apex_application_install` — pre-import configuration: set_workspace_id, set_application_id, set_schema, generate_offset, etc. |
-| `export_api.md` | `apex_export` — export API: get_application (split, components, types), get_workspace, zip/unzip |
-| `../examples/add_select_list_item.md` | Complete end-to-end patching example: adding a select list item |
+| File | Contents |
+|------|----------|
+| `apex_imp.md` | Core import engine: `wwv_flow_imp` (import/component begin/end, `id()`, file format, ID offsets, directory structure) |
+| `imp_page.md` | `wwv_flow_imp_page` — all page component procedures (regions, items, buttons, processes, DAs, validations, IR/IG/charts/maps/cards) |
+| `imp_shared.md` | `wwv_flow_imp_shared` — shared components (LOVs, auth, lists, templates, build options, static files) |
+| `valid_values.md` | All valid parameter values (region/item/process/DA types, data types, etc.) |
+| `app_install.md` | `apex_application_install` — pre-import configuration (workspace, app ID, schema, offset) |
+| `export_api.md` | `apex_export` — export API (split, components, types) |
+| `../examples/add_select_list_item.md` | End-to-end patching example |
 
-## Quick package reference
+## Quick Package Reference
 
-| Package | Internal Name | Purpose |
-|---------|--------------|---------|
-| Core import engine | `wwv_flow_imp` | `import_begin`, `import_end`, `component_begin`, `component_end`, `id()`, `set_version` |
-| Page components | `wwv_flow_imp_page` | Pages, regions, items, buttons, processes, DAs, validations, computations, branches, IR, IG, charts, maps, cards |
-| Shared components | `wwv_flow_imp_shared` | LOVs, auth schemes, authorization, lists, templates, build options, static files |
-| String utilities | `wwv_flow_string` / `apex_string` | `join()` for concatenating `wwv_flow_t_varchar2` collections in export files |
-| Pre-import config | `wwv_flow_application_install` / `apex_application_install` | Override workspace, app ID, schema, offset before import |
-| Export API | `wwv_flow_export_api` / `apex_export` | `get_application` with split/component options |
-| Import parser | `wwv_flow_imp_parser` | Parses export files, handles ZIP, creates installable SQL from split files |
-| ID generation | `wwv_flow_id` | `next_val` — generates unique component IDs |
+| Package | Purpose |
+|---------|---------|
+| `wwv_flow_imp` | Core import engine: `import_begin/end`, `component_begin/end`, `id()`, `set_version` |
+| `wwv_flow_imp_page` | Pages, regions, items, buttons, processes, DAs, validations, IR, IG, charts, maps, cards |
+| `wwv_flow_imp_shared` | LOVs, auth schemes, lists, templates, build options, static files |
+| `wwv_flow_string` / `apex_string` | `join()` for multi-line strings in export files |
+| `apex_application_install` | Override workspace, app ID, schema, offset before import |
+| `apex_export` | `get_application` with split/component options |
+| `wwv_flow_imp_parser` | Parse/install export files (ZIP, split, single) |
+| `wwv_flow_id` | `next_val` — generate unique component IDs |
 
-## Key facts
+## Key Facts
 
-- **`wwv_flow_imp` is frozen as of APEX 21.2** — new components use `wwv_flow_imp_page` and `wwv_flow_imp_shared`
-- The `id()` function applies `g_id_offset`: `id(N)` returns `N + g_id_offset`
-- Current version constants: `c_release_date_str = '2024.11.30'`, `c_current = 20241130`
-- Component creation order matters due to parent-child relationships (page → region → items/buttons)
-- All export files are UTF-8 encoded with `set define off` at the top
+- `wwv_flow_imp` frozen as of APEX 21.2 — new components use `wwv_flow_imp_page` / `wwv_flow_imp_shared`
+- `id(N)` returns `N + g_id_offset`
+- Current version: `c_release_date_str = '2024.11.30'`, `c_current = 20241130`
+- Creation order matters: page → region → items/buttons (parent-child)
+- Export files: UTF-8, `set define off` at top
 
 ## Version Compatibility
 
-This documentation is based on **APEX 24.2** (`APEX_240200`). Key compatibility notes:
+| Feature | Since | Notes |
+|---------|-------|-------|
+| `wwv_flow_imp_page` / `wwv_flow_imp_shared` | 21.2 | Replaced frozen `wwv_flow_imp` |
+| `apex export -split` | 5.0 | Split export via SQLcl |
+| `-expComponents` | 19.1 | Partial component export |
+| AI Builder (`p_ai_*` params) | 24.1 | Silently skipped on older APEX |
+| Map/Cards regions | 21.1 | `create_map_region`, `create_card` |
 
-| Feature / API | Introduced In | Notes |
-|---------------|---------------|-------|
-| `wwv_flow_imp_page` / `wwv_flow_imp_shared` | APEX 21.2 | Replaced frozen `wwv_flow_imp` for new components |
-| `apex_string` (public synonym) | APEX 5.1 | Internal: `wwv_flow_string` |
-| `apex_export.get_application` with `-split` | APEX 5.0 | SQLcl `apex export -split` |
-| `-expComponents` flag | APEX 19.1+ (SQLcl 19.1) | Partial component export |
-| AI Builder integration | APEX 24.1 | `p_ai_*` parameters in create procedures |
-| Map regions | APEX 21.1 | `create_map_region`, `create_map_region_layer` |
-| Cards regions | APEX 21.1 | `create_card` |
-
-**If targeting APEX 23.x or earlier:**
-- Ignore `p_ai_*` parameters (AI Builder) — they will be silently skipped on import.
-- Map and Cards regions are available from 21.1+.
-- Core patching workflow is identical; only parameter availability differs.
-- When in doubt, export from the target APEX version first to see which parameters it produces.
+When targeting older APEX: export from the target version first to see which parameters it produces.
