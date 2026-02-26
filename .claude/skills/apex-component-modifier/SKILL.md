@@ -134,6 +134,7 @@ If inputs are still incomplete after applying defaults, resolve missing details 
    - When creating new components, follow `apex_imp` rules for ID generation/offsets.
    - Do not invent random IDs (collision risk on import).
 4. Run through `templates/validation_checklist.md` after patching.
+5. Run automated validation: `bash tools/validate_export.sh <patched_file.sql>`
 
 ### 8) Import back into APEX (SQLcl MCP)
 1. If the target environment matches the source (same app/workspace schema expectations):
