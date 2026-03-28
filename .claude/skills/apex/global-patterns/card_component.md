@@ -4,7 +4,7 @@ Each `NATIVE_CARDS` region has one `create_card` call defining layout, content m
 
 ## Layout Types
 
-### GRID (most common)
+### GRID (most common — 47 of 57 examples)
 ```sql
 wwv_flow_imp_page.create_card(
  p_id=>wwv_flow_imp.id(10750863586718589216)
@@ -23,9 +23,9 @@ wwv_flow_imp_page.create_card(
 );
 ```
 
-Optional: `p_grid_column_count=>5` for explicit column count (default=auto).
+Optional: `p_grid_column_count=>N` for explicit column count (observed: 2, 3, 4, 5; default=auto).
 
-### ROW (horizontal)
+### ROW (horizontal — 9 examples)
 ```sql
 wwv_flow_imp_page.create_card(
  p_id=>wwv_flow_imp.id(6044454869807692303)
@@ -52,7 +52,7 @@ wwv_flow_imp_page.create_card(
 );
 ```
 
-### FLOAT
+### FLOAT (1 example)
 Same structure as ROW. Differs: `p_layout_type=>'FLOAT'`, often uses `p_card_css_classes`, STATIC_URL media (`p_media_url=>'&IMAGE_URL!ATTR.'`).
 
 ## Content Columns
@@ -63,8 +63,9 @@ Same structure as ROW. Differs: `p_layout_type=>'FLOAT'`, often uses `p_card_css
 | `p_sub_title_column_name` | Subtitle | `'JOB'` |
 | `p_body_column_name` | Body text | `'OVERVIEW'` |
 | `p_second_body_column_name` | Secondary body | `'MEDIA_TYPE'` |
-| `p_badge_column_name` | Badge value | `'VOTE_AVERAGE'`, `'DEPTNO_L$2'` |
+| `p_badge_column_name` | Badge value | `'VOTE_AVERAGE'`, `'DEPTNO_L$2'`, `'RATING'`, `'STATUS'` |
 | `p_badge_label` | Badge label prefix | `'Rating:'`, `'Department: '` |
+| `p_badge_css_classes` | Badge icon/styling | `'fa fa-star u-color-7-text'` |
 
 ## Advanced Formatting
 
@@ -91,17 +92,32 @@ When `p_*_adv_formatting=>true`, use `p_*_html_expr` for custom HTML with substi
 '    {endloop/}',
 '    </ul>',
 '{endif/}'))
+
+-- Conditional value display with if/else
+,p_sub_title_adv_formatting=>true
+,p_sub_title_html_expr=>'{if !=DELIVERY_FEE/}Free Delivery{else/}$&DELIVERY_FEE. Delivery Fee{endif/} &bull; &DELIVERY_TIME. min'
+
+-- Second body with advanced formatting
+,p_second_body_adv_formatting=>true
+,p_second_body_html_expr=>'...'
 ```
 
 ## Card CSS Classes
 
-Dynamic per-card styling: `p_card_css_classes=>'&CARD_COLOR!ATTR.'` (column substitution) or static: `p_card_css_classes=>'urlImages'`.
+Dynamic per-card styling: `p_card_css_classes=>'&CARD_COLOR!ATTR.'` (column substitution).
+
+Observed values: `'&CARD_COLOR!ATTR.'`, `'urlImages'`, `'a-CardView--noUI'`, `'a-CardView-item-mobile rounded rounded-lg'`.
+
+## Title CSS Classes
+
+`p_title_css_classes` — observed: `'a-CardView-title'`, `'u-textCenter'`.
 
 ## Badge
 
 ```sql
 ,p_badge_column_name=>'VOTE_AVERAGE'
 ,p_badge_label=>'Rating:'
+,p_badge_css_classes=>'fa fa-star u-color-7-text'
 ```
 
 LOV lookup column: `p_badge_column_name=>'DEPTNO_L$2'`. With label prefix: `p_badge_label=>'Department: '`.
@@ -135,3 +151,18 @@ wwv_flow_imp_page.create_card(
 ,p_media_description=>'&TITLE!ATTR.'
 );
 ```
+
+## Parameter Value Catalog
+
+| Parameter | Observed Values |
+|-----------|----------------|
+| `p_layout_type` | `GRID` (47), `ROW` (9), `FLOAT` (1) |
+| `p_grid_column_count` | `2`, `3`, `4`, `5`, *(not set = auto)* |
+| `p_title_adv_formatting` | `true`, `false` |
+| `p_sub_title_adv_formatting` | `true`, `false` |
+| `p_body_adv_formatting` | `true`, `false` |
+| `p_second_body_adv_formatting` | `true`, `false` |
+| `p_media_adv_formatting` | `true`, `false` |
+| `p_badge_css_classes` | `'fa fa-star u-color-7-text'` |
+| `p_card_css_classes` | `'&CARD_COLOR!ATTR.'`, `'urlImages'`, `'a-CardView--noUI'`, `'a-CardView-item-mobile rounded rounded-lg'` |
+| `p_title_css_classes` | `'a-CardView-title'`, `'u-textCenter'` |

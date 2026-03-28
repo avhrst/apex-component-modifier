@@ -9,9 +9,10 @@ Uses `create_page_plug` with `p_plug_source_type=>'NATIVE_CARDS'` and template I
 | A | `#DEFAULT#:t-CardsRegion--styleA` |
 | B | `#DEFAULT#:t-CardsRegion--styleB` |
 | C | `#DEFAULT#:t-CardsRegion--styleC` |
+| Hidden header | `#DEFAULT#:t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc` |
 | None | `#DEFAULT#` |
 
-Additional CSS classes: `u-colors` (for color-coded cards)
+Additional CSS classes: `u-colors` (for color-coded cards) — can appear in `p_region_template_options` as `#DEFAULT#:u-colors:t-CardsRegion--styleA`.
 
 ## Data Sources
 
@@ -125,6 +126,32 @@ Use SQL CASE + Universal Theme color modifiers (`u-color-2` through `u-color-5`)
 '  from EBA_DEMO_CARD_EMP'))
 ```
 
+## AI-Enabled
+
+Cards regions support `p_ai_enabled=>false` (default in all observed examples).
+
+## Conditional Display
+
+```sql
+,p_plug_display_condition_type=>'...'
+,p_plug_display_when_condition=>'...'
+```
+
 ## Faceted Search Integration
 
 Cards as filtered region: faceted search panel points `p_filtered_region_id` to the cards region ID. See `faceted_search.md`.
+
+## Parameter Value Catalog
+
+| Parameter | Observed Values |
+|-----------|----------------|
+| `p_query_type` | `TABLE`, `SQL` |
+| `p_location` | `WEB_SOURCE`, *(not set = LOCAL)* |
+| `p_plug_source_type` | `NATIVE_CARDS` |
+| `p_plug_query_num_rows_type` | `SCROLL`, `SET` |
+| `p_region_template_options` | `#DEFAULT#`, `#DEFAULT#:t-CardsRegion--styleA`, `#DEFAULT#:t-CardsRegion--styleB`, `#DEFAULT#:t-CardsRegion--styleC`, `#DEFAULT#:t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc`, `#DEFAULT#:u-colors:t-CardsRegion--styleA` |
+| `p_lazy_loading` | `false` |
+| `p_include_rowid_column` | `false` |
+| `p_ai_enabled` | `false` |
+| `p_pagination_display_position` | `BOTTOM_RIGHT` |
+| `p_show_total_row_count` | `true` |
