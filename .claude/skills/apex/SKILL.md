@@ -56,6 +56,12 @@ Confirm `install_component.sql` (partial) or `install.sql` (full) exists.
    - Cards -> `cards_region.md`, `card_component.md`, `card_media.md`, `card_actions.md`, `card_icons.md`
    - Chart -> `jet_chart.md` | Classic Report -> `classic_report.md`
    - DAs -> `dynamic_actions.md` | Faceted Search -> `faceted_search.md`
+   - Process -> `page_process.md` | Validation -> `page_validation.md`
+   - Computation -> `page_computation.md` | Branch -> `page_branch.md`
+   - Navigation (lists/menus/breadcrumbs) -> `navigation.md`
+   - LOV -> `lov.md` | Authorization -> `authorization.md`
+   - Web Source -> `web_source.md` | Automation -> `automation.md`
+   - Map -> `map_region.md`
 6. `app-patterns/catalog.md` + `conventions.md` -- if present, load to match app-specific template IDs, naming, and conventions
 
 ### 5) Plan the change set
