@@ -426,3 +426,48 @@ wwv_flow_imp_page.create_page_da_event(
 **`create_report_region`**: `p_id`, `p_name`, `p_source_type` (`'NATIVE_SQL_REPORT'`), `p_query_type`, `p_source` or `p_query_table`, `p_template`, `p_display_sequence`, `p_query_row_template`, `p_query_options` (`'DERIVED_REPORT_COLUMNS'`).
 
 **`create_report_columns`**: `p_id`, `p_query_column_id`, `p_column_alias`, `p_column_display_sequence`.
+
+## Parameter Value Catalog
+
+### Query source types (`p_query_type`)
+`'SQL'` (96%) · `'TABLE'` (4%)
+
+### Rows per page (`p_query_num_rows`)
+`15` (58%) · `50` (15%) · `150` (5%) · `100` (4%) · `500` (2%) · `10000` (2%) · `5000` (2%) · `1000` (2%) · `20` (<1%) · `10` (<1%) · `6` (1%) · `4` (<1%) · `5` (<1%) · `1` (<1%)
+
+### Pagination types (`p_query_num_rows_type`)
+`'NEXT_PREVIOUS_LINKS'` (74%) · `'ROW_RANGES_IN_SELECT_LIST'` (12%) · `'0'` (hidden, 10%) · `'ROW_RANGES_WITH_LINKS'` (3%) · `'ROWS_X_TO_Y_OF_Z'` (1%) · `'ROWS_X_TO_Y'` (<1%) · `'SEARCH_ENGINE'` (<1%)
+
+### Pagination position (`p_pagination_display_position`)
+`'BOTTOM_RIGHT'` (100%)
+
+### Max row count (`p_query_row_count_max`)
+`500` · `5000` · `100000`
+
+### Column display modes (`p_display_as`)
+`'WITHOUT_MODIFICATION'` (37%) · `'TEXT_FROM_LOV_ESC'` (27%) · `'NATIVE_HIDDEN'` (21%) · `'NATIVE_TEXT_FIELD'` (4%) · `'NATIVE_RADIOGROUP'` (4%) · `'NATIVE_SELECT_LIST'` (3%) · `'NATIVE_YES_NO'` (1%) · `'NATIVE_TEXTAREA'` (1%) · `'NATIVE_DISPLAY_ONLY'` (1%) · `'NATIVE_CHECKBOX'` (1%)
+
+### Column alignment (`p_heading_alignment` / `p_column_alignment`)
+`'LEFT'` · `'CENTER'` · `'RIGHT'`
+
+### Column formats
+Number: `'999G999G999G999G999G990'` (int) · `'999G999G999G990D00'` (decimal) · `'FML999G999G999G990D00'` (currency)
+Date: `'DD-MON-YYYY'` · `'DD-MON-YYYY HH24:MI'` · `'YYYY-MM-DD'` · `'SINCE'`
+
+### Column display condition types (`p_display_when_cond_type`)
+`'EXISTS'` · `'NEVER'`
+
+### Region display condition types (`p_display_condition_type`)
+`'EXISTS'` · `'VAL_OF_ITEM_IN_COND_EQ_COND2'`
+
+### Sort null position (`p_sort_null`)
+`'L'` (last, 100%)
+
+### Fixed header (`p_fixed_header`)
+`'NONE'` (100%)
+
+### Report (component) template options
+`'t-Report--stretch'` · `'t-Report--altRowsDefault'` · `'t-Report--rowHighlight'` · `'t-Report--staticRowColors'` · `'t-Report--noBorders'` · `'t-Report--inline'` · `'t-Report--hideNoPagination'` · `'t-AVPList--leftAligned'` · `'t-AVPList--fixedLabelSmall'` · `'t-Comments--chat'`
+
+### Region template options
+`'t-Region--noPadding'` · `'t-Region--scrollBody'` · `'t-Region--noBorder'` · `'t-Region--hideHeader js-addHiddenHeadingRoleDesc'` · `'t-Region--hiddenOverflow'` · `'js-showMaximizeButton'`

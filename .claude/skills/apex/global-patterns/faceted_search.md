@@ -321,3 +321,92 @@ Facet items: all `create_page_item` set `p_item_plug_id` to the **faceted search
 | NUMBER | `NATIVE_RANGE` | Define buckets via `p_lov` |
 | DATE | `NATIVE_RANGE` | Date range buckets |
 | Multiple text columns | `NATIVE_SEARCH` | Comma-separated `p_source` |
+
+## Smart Filters (`NATIVE_SMART_FILTERS`)
+
+Smart Filters are a compact variant: filter suggestions in a bar above the report (no sidebar).
+
+```sql
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(13963104354221317155)
+,p_plug_name=>'Smart Filters'
+,p_plug_display_sequence=>20
+,p_plug_source_type=>'NATIVE_SMART_FILTERS'
+,p_filtered_region_id=>wwv_flow_imp.id(13963103946885317154)
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'compact_numbers_threshold', '10000',
+  'more_filters_suggestion_chip', 'N',
+  'show_total_row_count', 'N')).to_clob
+);
+```
+
+Smart Filters attributes: `compact_numbers_threshold`, `more_filters_suggestion_chip` ('Y'/'N'), `show_total_row_count` ('Y'/'N'). Lighter than full Faceted Search -- no sidebar, charts, or p_fc_* params.
+
+Smart Filter items use the same `FACET_COLUMN` source type but simpler facet types: `NATIVE_SEARCH`, `NATIVE_CHECKBOX`, `NATIVE_SELECT_LIST`, `NATIVE_HIDDEN`.
+
+### Facet items in Smart Filters context
+
+```sql
+-- Hidden facet (programmatic filtering)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_source_type=>'FACET_COLUMN'
+,p_source=>'DEPARTMENT_ID'
+
+-- Select list facet (single-select filter)
+,p_display_as=>'NATIVE_SELECT_LIST'
+,p_source_type=>'FACET_COLUMN'
+,p_source=>'STATUS'
+```
+
+## Additional Facet Parameters
+
+### `p_fc_filter_combination`
+
+```sql
+,p_fc_filter_combination=>'OR'    -- Default is AND; use OR for multi-value "any of" matching
+```
+
+### `p_fc_display_as`
+`'INLINE'` (91%) or `'FILTER_DIALOG'` (9%) -- dialog shows facets in a popup.
+
+### `p_fc_max_height`
+Limits facet panel height in pixels.
+
+## Parameter Value Catalog
+
+### Facet item types (within FACET_COLUMN context)
+`'NATIVE_SEARCH'` (38%) · `'NATIVE_HIDDEN'` (20%) · `'NATIVE_CHECKBOX'` (most common visible facet) · `'NATIVE_RANGE'` · `'NATIVE_SELECT_LIST'` (10%) · `'NATIVE_SELECT_ONE'`
+
+### Faceted Search plugin attributes
+`'batch_facet_search'`: `'Y'` / `'N'`
+`'compact_numbers_threshold'`: `'10000'` (100%)
+`'current_facets_selector'`: `'#active_facets'` (when used)
+`'display_chart_for_top_n_values'`: `'10'` (100%)
+`'show_charts'`: `'Y'` / `'N'`
+`'show_current_facets'`: `'E'` (always) · `'Y'` (when set) · `'N'` (never)
+`'show_total_row_count'`: `'Y'` / `'N'`
+
+### Smart Filters plugin attributes
+`'compact_numbers_threshold'`: `'10000'`
+`'more_filters_suggestion_chip'`: `'N'` (100%)
+`'show_total_row_count'`: `'N'` (100%)
+
+### Zero-count entries (`p_fc_zero_count_entries`)
+`'H'` (hide, 95%) · `'D'` (disable, 5%) · `'S'` (show)
+
+### Display mode (`p_fc_display_as`)
+`'INLINE'` (91%) · `'FILTER_DIALOG'` (9%)
+
+### Filter combination (`p_fc_filter_combination`)
+`'OR'` (when set) -- default is AND (omitted)
+
+### Range attributes
+`'manual_entry'`: `'Y'` / `'N'`
+`'select_multiple'`: `'Y'` / `'N'`
+
+### Search attributes
+`'input_field'`: `'FACET'` / `'TOP'`
+`'search_type'`: `'ROW'` / `'COLUMN'`
+
+### Page component map
+`'22'` (Faceted Search page template)

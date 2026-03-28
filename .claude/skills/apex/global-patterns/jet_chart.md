@@ -712,3 +712,113 @@ apex.region("pyramid1").widget().ojChart({styleDefaults: { 'threeDEffect': 'on' 
 `p_task_label_position` (gantt): `start`, `innerStart`, `innerCenter`, `innerEnd`, `end`, `none`
 `p_gantt_start_date_source` / `p_gantt_end_date_source`: `DB_COLUMN`, `ITEM`
 `p_gantt_viewport_start_source` / `p_gantt_viewport_end_source`: `DB_COLUMN`, `ITEM`
+
+## Parameter Value Catalog
+
+### Chart types (`p_chart_type`)
+`'bar'` (39%) · `'dial'` (16%) · `'pie'` (7%) · `'donut'` (7%) · `'line'` (4%) · `'combo'` (4%) · `'boxPlot'` (4%) · `'lineWithArea'` (4%) · `'area'` (4%) · `'funnel'` (3%) · `'scatter'` (2%) · `'gantt'` (2%) · `'range'` (1%) · `'stock'` (<1%) · `'radar'` (<1%) · `'pyramid'` (<1%) · `'polar'` (<1%) · `'bubble'` (<1%)
+
+### Orientation (`p_orientation`)
+`'vertical'` (83%) · `'horizontal'` (17%)
+
+### Legend position (`p_legend_position`)
+`'auto'` (72%) · `'top'` (14%) · `'end'`/`'END'` (13%) · `'bottom'` (1%)
+
+### Pie selection effect (`p_pie_selection_effect`)
+`'highlight'` (73%) · `'highlightAndExplode'` (23%) · `'explode'` (4%)
+
+### Data source type (`p_data_source_type` — series)
+`'SQL'` (100%)
+
+### Threshold display (`p_threshold_display`)
+`'onIndicator'` (98%) · `'all'` (1%) · `'currentOnly'` (1%)
+
+### Label display mode (`p_items_label_display_as`)
+`'PERCENT'` (95%) · `'LABEL'` (3%) · `'ALL'` (1%) · `'COMBO'` (<1%)
+
+### Spark chart (`p_spark_chart`)
+`'N'` (100%)
+
+### Animation on display (`p_animation_on_display`)
+`'auto'` · `'none'` · `'alphaFade'`
+
+### Animation on data change (`p_animation_on_data_change`)
+`'auto'` · `'none'`
+
+### Data cursor (`p_data_cursor`)
+`'auto'` · `'on'` · `'off'`
+
+### Data cursor behavior (`p_data_cursor_behavior`)
+`'auto'` · `'smooth'`
+
+### Hide and show behavior (`p_hide_and_show_behavior`)
+`'none'` · `'withRescale'` · `'withoutRescale'`
+
+### Hover behavior (`p_hover_behavior`)
+`'none'` · `'dim'`
+
+### Zoom and scroll (`p_zoom_and_scroll`)
+`'off'` · `'delayed'` · `'live'`
+
+### Initial zooming (`p_initial_zooming`)
+`'none'` · `'first'` · `'last'`
+
+### Stack (`p_stack`)
+`'on'` · `'off'`
+
+### Sorting (`p_sorting`)
+`'label-asc'` · `'label-desc'`
+
+### Axis format type (`p_format_type`)
+`'decimal'` · `'currency'` · `'percent'` · `'datetime-long'` · `'datetime-full'` · `'date-medium'`
+
+### Axis format scaling (`p_format_scaling`)
+`'auto'` · `'none'` · `'thousand'` · `'million'` · `'billion'` · `'trillion'` · `'quadrillion'`
+
+### Axis baseline scaling (`p_baseline_scaling`)
+`'zero'` · `'min'`
+
+### Axis position (`p_position`)
+`'auto'` · `'start'` · `'end'`
+
+### Tick label rotation (`p_tick_label_rotation`)
+`'auto'`
+
+### Value format type (`p_value_format_type` — chart-level)
+`'decimal'` · `'currency'` · `'percent'`
+
+### Value format scaling (`p_value_format_scaling`)
+`'none'` · `'auto'` · `'thousand'` · `'million'`
+
+### Gauge orientation (`p_gauge_orientation`)
+`'horizontal'` · `'circular'`
+
+### Series type (`p_series_type`)
+`'bar'` · `'line'` · `'area'` · `'lineWithArea'` · `'barRange'` · `'areaRange'` · `'boxPlot'`
+
+### Line style (`p_line_style`)
+`'solid'` · `'dotted'` · `'dashed'`
+
+### Line type (`p_line_type`)
+`'auto'` · `'straight'` · `'curved'` · `'stepped'` · `'centeredStepped'`
+
+### Marker rendered (`p_marker_rendered`)
+`'auto'` · `'on'` · `'off'`
+
+### Marker shape (`p_marker_shape`)
+`'auto'` · `'star'` · `'plus'` · `'diamond'` · `'circle'`
+
+### Label position (`p_items_label_position`)
+`'auto'` · `'center'` · `'insideBarEdge'` · `'outsideBarEdge'` · `'aboveMarker'` · `'belowMarker'` · `'beforeMarker'` · `'afterMarker'` · `'none'`
+
+### Stock render (`p_stock_render_as`)
+`'candlestick'`
+
+### Gantt axis scale (`p_axis_scale`)
+`'days'` · `'weeks'` · `'months'` · `'quarters'` · `'years'`
+
+### Task label position (`p_task_label_position`)
+`'start'` · `'innerStart'` · `'innerCenter'` · `'innerEnd'` · `'end'` · `'none'`
+
+### Time axis type (`p_time_axis_type`)
+`'disabled'` · `'enabled'` · `'auto'`

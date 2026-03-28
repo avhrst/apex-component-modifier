@@ -593,3 +593,120 @@ Cross-field via `apexendrecordedit` custom event:
 ,p_bind_event_type_custom=>'apexendrecordedit'
 -- Action uses: ui.model.setValidity(validity, ui.recordId, null, message);
 ```
+
+### NATIVE_DISABLE / NATIVE_ENABLE
+
+Toggle item editability. Used in TRUE/FALSE pairs:
+```sql
+-- TRUE: enable
+,p_action=>'NATIVE_ENABLE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P3_COMM'
+
+-- FALSE: disable
+,p_action=>'NATIVE_DISABLE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P3_COMM'
+```
+
+### NATIVE_CLOSE_REGION / NATIVE_OPEN_REGION
+
+Collapse/expand collapsible regions:
+```sql
+,p_action=>'NATIVE_CLOSE_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(...)
+
+,p_action=>'NATIVE_OPEN_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(...)
+```
+
+### NATIVE_ALERT
+
+Show browser alert dialog:
+```sql
+,p_action=>'NATIVE_ALERT'
+,p_attribute_01=>'Please use YYYY-MM-DD'
+```
+
+### NATIVE_DOWNLOAD
+
+Download a BLOB:
+```sql
+,p_action=>'NATIVE_DOWNLOAD'
+,p_attribute_01=>'N'                      -- Show processing
+,p_attribute_03=>'ATTACHMENT'             -- Content disposition
+,p_attribute_05=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select DOCUMENT_BLOB, DOCUMENT_FILENAME, DOCUMENT_MIMETYPE',
+'  from MY_TABLE',
+'  where id = :P30_ID'))
+```
+
+### NATIVE_ADD_CLASS / NATIVE_REMOVE_CLASS
+
+Add/remove CSS classes:
+```sql
+,p_action=>'NATIVE_ADD_CLASS'
+,p_affected_elements_type=>'ITEM'       -- or EVENT_SOURCE
+,p_affected_elements=>'P7_ENAME'
+,p_attribute_01=>'validation_error'     -- CSS class name
+```
+
+### NATIVE_SET_CSS
+
+Set CSS property:
+```sql
+,p_action=>'NATIVE_SET_CSS'
+,p_affected_elements_type=>'DOM_OBJECT'
+,p_affected_elements=>'P22_SAL_display'
+,p_attribute_01=>'color'                -- CSS property
+,p_attribute_02=>'red'                  -- Value
+```
+
+### NATIVE_SHARE
+
+Share page via Web Share API:
+```sql
+,p_action=>'NATIVE_SHARE'
+,p_attribute_01=>'Sharing a page title'       -- Title
+,p_attribute_02=>'Sharing an APEX page!'      -- Text
+,p_attribute_03=>'current_page'               -- URL source
+,p_wait_for_result=>'Y'
+```
+
+## Parameter Value Catalog
+
+### Action types (`p_action`)
+`'NATIVE_REFRESH'` (37%) · `'NATIVE_JAVASCRIPT_CODE'` (15%) · `'NATIVE_DIALOG_CANCEL'` (14%) · `'NATIVE_SET_VALUE'` (8%) · `'NATIVE_HIDE'` (6%) · `'NATIVE_EXECUTE_PLSQL_CODE'` (6%) · `'NATIVE_SHOW'` (6%) · `'NATIVE_SUBMIT_PAGE'` (2%) · `'NATIVE_SET_FOCUS'` (2%) · `'NATIVE_DISABLE'` (2%) · `'NATIVE_CLOSE_REGION'` (2%) · `'NATIVE_DIALOG_CLOSE'` (2%) · `'NATIVE_ENABLE'` (1%) · `'NATIVE_ALERT'` (1%) · `'NATIVE_OPEN_REGION'` (1%) · `'NATIVE_CANCEL_EVENT'` (1%) · `'NATIVE_CONFIRM'` (1%) · `'NATIVE_CLEAR'` (<1%) · `'NATIVE_DOWNLOAD'` (<1%) · `'NATIVE_ADD_CLASS'` (<1%) · `'NATIVE_REMOVE_CLASS'` (<1%) · `'NATIVE_SHARE'` (<1%) · `'NATIVE_SET_CSS'` (<1%) · `'NATIVE_TREE_EXPAND'` (<1%) · `'NATIVE_TREE_COLLAPSE'` (<1%) · `'NATIVE_GET_CURRENT_POSITION'` (<1%)
+
+### Bind event types (`p_bind_event_type`)
+`'click'` (37%) · `'apexafterclosedialog'` (31%) · `'change'` (18%) · `'ready'` (6%) · `'custom'` (1%) · `'keypress'` (1%) · `'keyup'` (1%) · `'apexafterrefresh'` (1%) · `'apexafterclosecanceldialog'` (<1%) · `'focusout'` (<1%) · `'keydown'` (<1%) · `'scroll'` (<1%) · `'input'` (<1%) · `'focusin'` (<1%) · `'apextap'` (<1%) · `'apexswipe'` (<1%) · `'apexpress'` (<1%) · `'apexpan'` (<1%)
+IG compound: `'NATIVE_IG|REGION TYPE|interactivegridselectionchange'`
+Map: `'NATIVE_MAP_REGION|REGION TYPE|spatialmapobjectclick'` · `'...|spatialmapchanged'` · `'...|spatialmapclick'`
+Calendar: `'NATIVE_CSS_CALENDAR|REGION TYPE|apexcalendareventselect'` · `'...|apexcalendardateselect'` · `'...|apexcalendarviewchange'`
+Tree: `'NATIVE_JSTREE|REGION TYPE|treeviewselectionchange'`
+
+### Triggering element types (`p_triggering_element_type`)
+`'BUTTON'` (42%) · `'REGION'` (24%) · `'ITEM'` (22%) · `'JAVASCRIPT_EXPRESSION'` (7%) · `'JQUERY_SELECTOR'` (5%) · `'COLUMN'` (<1%)
+
+### Affected element types (`p_affected_elements_type`)
+`'REGION'` (69%) · `'ITEM'` (26%) · `'BUTTON'` (4%) · `'JQUERY_SELECTOR'` (1%) · `'COLUMN'` (<1%) · `'EVENT_SOURCE'` (<1%) · `'DOM_OBJECT'` (<1%) · `'TRIGGERING_ELEMENT'` (<1%) · `'JAVASCRIPT_EXPRESSION'` (<1%)
+
+### Triggering condition types (`p_triggering_condition_type`)
+`'JAVASCRIPT_EXPRESSION'` (51%) · `'EQUALS'` (26%) · `'NOT_NULL'` (10%) · `'NULL'` (7%) · `'IN_LIST'` (5%) · `'NOT_EQUALS'` (<1%) · `'GREATER_THAN'` (<1%)
+
+### Execution type (`p_execution_type`)
+`'IMMEDIATE'` (99%) · `'THROTTLE'` (<1%) · `'DEBOUNCE'` (<1%)
+
+### Event result (`p_event_result`)
+`'TRUE'` · `'FALSE'`
+
+### Set value source types (`p_attribute_01` for NATIVE_SET_VALUE)
+`'SQL_STATEMENT'` · `'STATIC_ASSIGNMENT'` · `'JAVASCRIPT_EXPRESSION'` · `'PLSQL_EXPRESSION'` · `'PLSQL_FUNCTION_BODY'` · `'DIALOG_RETURN_VALUE'`
+
+### PL/SQL language (`p_attribute_05` for NATIVE_EXECUTE_PLSQL_CODE)
+`'PLSQL'`
+
+### Bind type (`p_bind_type`)
+`'bind'` (standard) · `'live'` (event delegation, requires `p_bind_delegate_to_selector`)

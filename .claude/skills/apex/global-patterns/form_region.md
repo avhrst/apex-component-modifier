@@ -306,22 +306,133 @@ LOV-based variant adds `p_named_lov` and `p_lov`, uses `'based_on', 'LOV'`.
   'filename_column', 'LOGO_NAME')).to_clob
 ```
 
+### Radio Group
+
+```sql
+,p_display_as=>'NATIVE_RADIOGROUP'
+,p_named_lov=>'STATUS'
+,p_lov=>'.'||wwv_flow_imp.id(338679386717792149)||'.'
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--radioButtonGroup'
+,p_lov_display_extra=>'NO'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'number_of_columns', '2',
+  'page_action_on_selection', 'NONE')).to_clob
+```
+
+Attributes: `number_of_columns` (1-5), `page_action_on_selection` ('NONE', 'SUBMIT'). Styled as button group via `t-Form-fieldContainer--radioButtonGroup`.
+
+### Single Checkbox
+
+```sql
+,p_display_as=>'NATIVE_SINGLE_CHECKBOX'
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--large'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'checked_value', 'Y',
+  'unchecked_value', 'N',
+  'use_defaults', 'N')).to_clob
+```
+
+Attributes: `checked_value`, `unchecked_value` (custom values), `use_defaults` ('Y'=standard Y/N).
+
+### Password
+
+```sql
+,p_display_as=>'NATIVE_PASSWORD'
+,p_cSize=>64
+,p_cMaxlength=>100
+,p_is_persistent=>'N'
+,p_restricted_characters=>'WEB_SAFE'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'submit_when_enter_pressed', 'Y')).to_clob
+```
+
+Always set `p_is_persistent=>'N'`. Optional: `p_tag_attributes=>'autocomplete="current-password"'`.
+
+### Rich Text Editor
+
+```sql
+,p_display_as=>'NATIVE_RICH_TEXT_EDITOR'
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'allow_custom_html', 'Y',
+  'editor_type', 'MARKDOWN')).to_clob
+```
+
+Supports `p_plugin_init_javascript_code` for custom editor configuration (e.g., image upload).
+
+### Combobox
+
+```sql
+,p_display_as=>'NATIVE_COMBOBOX'
+,p_lov=>'STATIC:Display1;Return1,Display2;Return2'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'case_sensitive', 'N',
+  'fetch_on_search', 'N',
+  'match_type', 'CONTAINS',
+  'min_chars', '0',
+  'multi_selection', 'N')).to_clob
+```
+
+Attributes: `multi_selection` ('Y'/'N'), `manual_entries_item` (hidden item for custom entries), `max_values_in_list`.
+
+### Select One
+
+```sql
+,p_display_as=>'NATIVE_SELECT_ONE'
+,p_lov=>'STATIC2:Apple;APPLE,Orange;ORANGE'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'case_sensitive', 'N',
+  'fetch_on_search', 'N',
+  'match_type', 'CONTAINS',
+  'min_chars', '0')).to_clob
+```
+
+Modern searchable dropdown. Also supports SQL LOV.
+
+### Markdown Editor
+
+```sql
+,p_display_as=>'NATIVE_MARKDOWN_EDITOR'
+```
+
+### Shuttle
+
+```sql
+,p_display_as=>'NATIVE_SHUTTLE'
+```
+
+Multi-value selection between left/right lists. Uses colon-delimited storage.
+
 ### Item Type Summary
 
-| `p_display_as` | Key Attributes |
-|---|---|
-| `NATIVE_HIDDEN` | `value_protected` |
-| `NATIVE_TEXT_FIELD` | `subtype` ('TEXT','URL'), `trim_spaces`, `disabled` |
-| `NATIVE_TEXTAREA` | `auto_height`, `character_counter`, `resizable`, `trim_spaces` |
-| `NATIVE_NUMBER_FIELD` | `number_alignment`, `virtual_keyboard`, `min_value`, `max_value` |
-| `NATIVE_SELECT_LIST` | `page_action_on_selection` |
-| `NATIVE_POPUP_LOV` | `display_as` ('DIALOG','POPUP'), `initial_fetch`, `match_type` |
-| `NATIVE_DATE_PICKER_APEX` | `display_as`, `show_time`, `min_date`, `max_date`, `use_defaults` |
-| `NATIVE_CHECKBOX` | `number_of_columns` |
-| `NATIVE_YES_NO` | `use_defaults` |
-| `NATIVE_DISPLAY_ONLY` | `based_on` ('VALUE','LOV'), `format`, `send_on_page_submit` |
-| `NATIVE_DISPLAY_IMAGE` | `based_on`, `filename_column`, `blob_last_updated_column` |
-| `NATIVE_FILE` | `storage_type`, `filename_column`, `mime_type_column`, `display_as` |
+| `p_display_as` | Count | Key Attributes |
+|---|---|---|
+| `NATIVE_HIDDEN` | 1235 | `value_protected` |
+| `NATIVE_TEXT_FIELD` | 583 | `subtype` ('TEXT','URL'), `trim_spaces`, `disabled` |
+| `NATIVE_SELECT_LIST` | 429 | `page_action_on_selection` |
+| `NATIVE_CHECKBOX` | 347 | `number_of_columns` |
+| `NATIVE_DISPLAY_ONLY` | 241 | `based_on` ('VALUE','LOV'), `format`, `send_on_page_submit` |
+| `NATIVE_TEXTAREA` | 199 | `auto_height`, `character_counter`, `resizable`, `trim_spaces` |
+| `NATIVE_YES_NO` | 128 | `use_defaults` |
+| `NATIVE_DATE_PICKER_APEX` | 111 | `display_as`, `show_time`, `min_date`, `max_date`, `use_defaults` |
+| `NATIVE_RADIOGROUP` | 109 | `number_of_columns`, `page_action_on_selection` |
+| `NATIVE_NUMBER_FIELD` | 98 | `number_alignment`, `virtual_keyboard`, `min_value`, `max_value` |
+| `NATIVE_POPUP_LOV` | 47 | `display_as` ('DIALOG','POPUP'), `initial_fetch`, `match_type` |
+| `NATIVE_FILE` | 37 | `storage_type`, `filename_column`, `mime_type_column`, `display_as` |
+| `NATIVE_SELECT_ONE` | 35 | `case_sensitive`, `fetch_on_search`, `match_type`, `min_chars` |
+| `NATIVE_PASSWORD` | 31 | `submit_when_enter_pressed` |
+| `NATIVE_RICH_TEXT_EDITOR` | 25 | `allow_custom_html`, `editor_type` |
+| `NATIVE_SINGLE_CHECKBOX` | 22 | `checked_value`, `unchecked_value`, `use_defaults` |
+| `NATIVE_RANGE` | 20 | `manual_entry`, `select_multiple` |
+| `NATIVE_DISPLAY_IMAGE` | 17 | `based_on`, `filename_column`, `blob_last_updated_column` |
+| `NATIVE_COMBOBOX` | 10 | `case_sensitive`, `match_type`, `multi_selection`, `min_chars` |
+| `NATIVE_IMAGE_UPLOAD` | 7 | -- |
+| `NATIVE_MARKDOWN_EDITOR` | 5 | -- |
+| `NATIVE_SHUTTLE` | 4 | -- |
+| `NATIVE_COLOR_PICKER` | 2 | -- |
+| `NATIVE_AUTO_COMPLETE` | 2 | -- |
+| `NATIVE_STAR_RATING` | 1 | -- |
+| `NATIVE_SEARCH` | 54 | `input_field`, `search_type` (facet context) |
 
 ## Form Buttons
 
@@ -593,3 +704,32 @@ Only used on normal (non-modal) pages. Modal pages use NATIVE_CLOSE_WINDOW.
 - **Sequence numbering**: increments of 10
 - **All buttons** use template ID `4072362960822175091`
 - **Checkbox NVL computation**: `nvl(:P43_IS_ACTIVE,''N'')` before submit
+
+## Parameter Value Catalog
+
+### Item display types (`p_display_as`)
+`'NATIVE_HIDDEN'` (35%) · `'NATIVE_TEXT_FIELD'` (17%) · `'NATIVE_SELECT_LIST'` (12%) · `'NATIVE_CHECKBOX'` (10%) · `'NATIVE_DISPLAY_ONLY'` (7%) · `'NATIVE_TEXTAREA'` (6%) · `'NATIVE_YES_NO'` (4%) · `'NATIVE_DATE_PICKER_APEX'` (3%) · `'NATIVE_RADIOGROUP'` (3%) · `'NATIVE_NUMBER_FIELD'` (3%) · `'NATIVE_SEARCH'` (2%) · `'NATIVE_POPUP_LOV'` (1%) · `'NATIVE_FILE'` (1%) · `'NATIVE_SELECT_ONE'` (1%) · `'NATIVE_PASSWORD'` (1%) · `'NATIVE_RICH_TEXT_EDITOR'` (<1%) · `'NATIVE_SINGLE_CHECKBOX'` (<1%) · `'NATIVE_RANGE'` (<1%) · `'NATIVE_DISPLAY_IMAGE'` (<1%) · `'NATIVE_COMBOBOX'` (<1%) · `'NATIVE_IMAGE_UPLOAD'` (<1%) · `'NATIVE_MARKDOWN_EDITOR'` (<1%) · `'NATIVE_SHUTTLE'` (<1%) · `'NATIVE_COLOR_PICKER'` (<1%) · `'NATIVE_AUTO_COMPLETE'` (<1%) · `'NATIVE_STAR_RATING'` (<1%) · `'NATIVE_DATE_PICKER'` (<1%)
+
+### Source types (`p_source_type`)
+`'DB_COLUMN'` (67%) · `'REGION_SOURCE_COLUMN'` (20%) · `'FACET_COLUMN'` (9%) · `'QUERY'` (3%) · `'STATIC'` (2%) · `'EXPRESSION'` (1%) · `'FUNCTION_BODY'` (<1%) · `'ITEM'` (<1%) · `'QUERY_COLON'` (<1%) · `'NONE'` (<1%)
+
+### Button positions
+`'CLOSE'` · `'DELETE'` · `'NEXT'` · `'CREATE'` · `'PREVIOUS'` · `'EDIT'`
+
+### Button actions
+`'SUBMIT'` · `'REDIRECT_PAGE'` · `'REDIRECT_URL'` · `'DEFINED_BY_DA'`
+
+### Validation types
+`'ITEM_IS_NUMERIC'` · `'ITEM_IS_TIMESTAMP'` · `'ITEM_NOT_NULL'` · `'NOT_EXISTS'` · `'EXPRESSION'` (+ `p_validation2=>'PLSQL'`) · `'FUNC_BODY_RETURNING_BOOLEAN'` (+ `p_validation2=>'PLSQL'`)
+
+### Error display locations
+`'INLINE_WITH_FIELD_AND_NOTIFICATION'` · `'INLINE_IN_NOTIFICATION'`
+
+### Process types (form)
+`'NATIVE_FORM_FETCH'` (AFTER_HEADER) · `'NATIVE_FORM_PROCESS'` (AFTER_SUBMIT) · `'NATIVE_SESSION_STATE'` · `'NATIVE_CLOSE_WINDOW'`
+
+### Session state clear modes (`p_attribute_01`)
+`'CLEAR_CACHE_CURRENT_PAGE'` · `'CLEAR_CACHE_FOR_PAGES'`
+
+### Protection levels (`p_protection_level`)
+`'C'` (page) · `'S'` (sensitive items)
