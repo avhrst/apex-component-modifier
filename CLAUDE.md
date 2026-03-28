@@ -1,8 +1,8 @@
-# CLAUDE.md — Oracle APEX & SQLcl Skills (via Oracle SQLcl MCP)
+# CLAUDE.md — Oracle APEX & SQLcl Skills
 
-This repo defines **Claude Code Skills** for working with **Oracle Database and APEX** through **Oracle SQLcl’s built-in MCP Server**:
+This repo defines **Claude Code Skills** for working with **Oracle Database and APEX**:
 
-1. **apex** — Export/patch/import APEX components (pages, regions, items, etc.)
+1. **apex** — Export/patch/import APEX components via SQLcl CLI (Bash tool, not MCP)
 2. **sqlcl** — General-purpose Oracle DB & APEX operations (SQL, schema inspection, data ops, Liquibase, Data Pump, CI/CD projects)
 
 ## What you’re building

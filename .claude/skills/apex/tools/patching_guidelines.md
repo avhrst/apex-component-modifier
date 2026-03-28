@@ -81,6 +81,7 @@ Quotes doubled inside: `'it''s'`. Keep lines under ~4000 chars.
 
 | Pitfall | Prevention |
 |---------|------------|
+| Nested `begin...end;/` blocks (ORA-06550) | Each `begin...end;/` is a **separate** SQL*Plus block. The `/` terminates and executes the block. Never nest them — the inner `/` will terminate the outer block. `component_begin` + `create_page` go in block 1, each component gets its own block, `component_end` in the final block. |
 | Missing `/` terminator | Always `/` on own line after `end;` |
 | ID collision | Scan existing IDs first |
 | Orphaned cross-reference | Search for old ID before removing component |

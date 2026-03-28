@@ -1,3 +1,152 @@
+# Bitcoin Dashboard v2 Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Enhance the Bitcoin dashboard with a tabbed layout (Overview/Technical/History), candlestick chart, moving average overlays, and period selector buttons.
+
+**Architecture:** Create the `V_BTC_MOVING_AVERAGES` view via SQL CLI, then export page 1, rewrite the page file with tabbed structure containing all regions/items/DAs, import, and validate.
+
+**Tech Stack:** Oracle APEX 24.2, SQLcl CLI (`sql -S -name ai`), `BTC_PRICE_HISTORY` table, `V_BTC_MOVING_AVERAGES` view
+
+---
+
+## Key Constants
+
+- **App ID:** 129
+- **Connection:** `sql -S -name ai`
+- **Working directory:** `apex-export/btc-dashboard-v2`
+- **Page file:** `f129/application/pages/page_00001.sql`
+- **component_begin:** version `2024.11.30`, release `24.2.0`, workspace `5891473009157754`, app `129`, offset `0`, owner `AI`
+
+## Region Template IDs
+
+| Template | ID |
+|----------|-----|
+| Cards Container | `2072724515482255512` |
+| Standard | `4072358936313175081` |
+| Interactive Report | `2100526641005906379` |
+| Tabs Container | `3223171818405608528` |
+| Blank with Attributes | `4501440665235496320` |
+
+## ID Allocation
+
+All new IDs start at `8510074730755000` with gaps for grouping:
+
+| Component | ID |
+|---|---|
+| **Page-level** | |
+| P1_PERIOD hidden item | `8510074730755000` |
+| **Tabs Container** | |
+| Tabs Container region | `8510074730755100` |
+| **Tab 1: Overview** | |
+| Tab 1 region (sub-region) | `8510074730755200` |
+| Cards region | `8510074730755210` |
+| Cards card component | `8510074730755211` |
+| Period Selector 1 region | `8510074730755220` |
+| Candlestick region | `8510074730755230` |
+| Candlestick chart | `8510074730755231` |
+| Candlestick series | `8510074730755232` |
+| Candlestick x-axis | `8510074730755233` |
+| Candlestick y-axis | `8510074730755234` |
+| Volume region | `8510074730755240` |
+| Volume chart | `8510074730755241` |
+| Volume series | `8510074730755242` |
+| Volume x-axis | `8510074730755243` |
+| Volume y-axis | `8510074730755244` |
+| **Tab 2: Technical** | |
+| Tab 2 region (sub-region) | `8510074730755300` |
+| Period Selector 2 region | `8510074730755310` |
+| MA chart region | `8510074730755320` |
+| MA chart | `8510074730755321` |
+| MA series: Close Price | `8510074730755322` |
+| MA series: MA-7 | `8510074730755323` |
+| MA series: MA-30 | `8510074730755324` |
+| MA x-axis | `8510074730755325` |
+| MA y-axis | `8510074730755326` |
+| **Tab 3: History** | |
+| Tab 3 region (sub-region) | `8510074730755400` |
+| IR region | `8510074730755410` |
+| IR worksheet | `8510074730755411` |
+| IR col ID | `8510074730755412` |
+| IR col PRICE_DATE | `8510074730755413` |
+| IR col OPEN_PRICE | `8510074730755414` |
+| IR col HIGH_PRICE | `8510074730755415` |
+| IR col LOW_PRICE | `8510074730755416` |
+| IR col CLOSE_PRICE | `8510074730755417` |
+| IR col VOLUME | `8510074730755418` |
+| IR col MARKET_CAP | `8510074730755419` |
+| IR saved report | `8510074730755420` |
+| **Dynamic Action** | |
+| DA event: Period Click | `8510074730755500` |
+| DA action: Execute JS | `8510074730755501` |
+| DA action: Refresh candlestick | `8510074730755502` |
+| DA action: Refresh volume | `8510074730755503` |
+| DA action: Refresh MA chart | `8510074730755504` |
+
+---
+
+### Task 1: Create V_BTC_MOVING_AVERAGES view
+
+- [ ] **Step 1: Create the view**
+
+```bash
+sql -S -name ai <<'EOF'
+CREATE OR REPLACE VIEW v_btc_moving_averages AS
+SELECT
+  id, price_date, open_price, high_price, low_price, close_price, volume, market_cap,
+  ROUND(AVG(close_price) OVER (ORDER BY price_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW), 2) AS ma_7,
+  ROUND(AVG(close_price) OVER (ORDER BY price_date ROWS BETWEEN 29 PRECEDING AND CURRENT ROW), 2) AS ma_30
+FROM btc_price_history;
+exit;
+EOF
+```
+
+Expected: `View V_BTC_MOVING_AVERAGES created.`
+
+- [ ] **Step 2: Verify the view**
+
+```bash
+sql -S -name ai <<'EOF'
+SELECT price_date, close_price, ma_7, ma_30
+FROM v_btc_moving_averages
+WHERE price_date >= DATE '2026-03-20'
+ORDER BY price_date;
+exit;
+EOF
+```
+
+Expected: rows with non-null MA values, MA-7 closer to recent prices than MA-30.
+
+- [ ] **Step 3: Commit (no files — DB only)**
+
+No git commit needed for DB-only changes.
+
+---
+
+### Task 2: Export page 1 and write the full patched page file
+
+**Files:**
+- Create/Modify: `apex-export/btc-dashboard-v2/f129/application/pages/page_00001.sql`
+
+- [ ] **Step 1: Export current page 1**
+
+```bash
+mkdir -p apex-export/btc-dashboard-v2
+sql -S -name ai <<'EOF'
+apex export -applicationid 129 -split -dir apex-export/btc-dashboard-v2 -expComponents "PAGE:1"
+exit;
+EOF
+```
+
+- [ ] **Step 2: Verify export**
+
+Read `apex-export/btc-dashboard-v2/f129/application/pages/page_00001.sql` and confirm it exists.
+
+- [ ] **Step 3: Write the complete patched page file**
+
+Replace the entire content of `page_00001.sql` with the following. **CRITICAL:** Each `begin...end;/` is a separate SQL*Plus block. Never nest them.
+
+```sql
 prompt --application/pages/page_00001
 begin
 --   Manifest
@@ -842,3 +991,139 @@ begin
 wwv_flow_imp.component_end;
 end;
 /
+```
+
+- [ ] **Step 4: Validate the patched file**
+
+```bash
+bash .claude/skills/apex/tools/validate_export.sh apex-export/btc-dashboard-v2/f129/application/pages/page_00001.sql
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add apex-export/btc-dashboard-v2/
+git commit -m "feat: patch page 1 with tabbed bitcoin dashboard v2"
+```
+
+---
+
+### Task 3: Import patched page into APEX
+
+- [ ] **Step 1: Import via SQLcl CLI**
+
+```bash
+cd apex-export/btc-dashboard-v2/f129
+sql -S -name ai <<'EOF'
+@install_page.sql
+exit;
+EOF
+```
+
+Expected: `...done` with no errors.
+
+- [ ] **Step 2: If errors, check and fix**
+
+```bash
+sql -S -name ai <<'EOF'
+show errors;
+exit;
+EOF
+```
+
+---
+
+### Task 4: Validate dashboard v2
+
+- [ ] **Step 1: Verify page name**
+
+```bash
+sql -S -name ai <<'EOF'
+SELECT page_id, page_name FROM apex_application_pages WHERE application_id = 129 AND page_id = 1;
+exit;
+EOF
+```
+
+Expected: `Bitcoin Dashboard`.
+
+- [ ] **Step 2: Verify all regions**
+
+```bash
+sql -S -name ai <<'EOF'
+SELECT region_name, source_type, display_sequence, parent_region_name
+FROM (
+  SELECT r.region_name, r.source_type, r.display_sequence,
+         (SELECT p.region_name FROM apex_application_page_regions p WHERE p.region_id = r.parent_region_id) AS parent_region_name
+  FROM apex_application_page_regions r
+  WHERE r.application_id = 129 AND r.page_id = 1
+)
+ORDER BY parent_region_name NULLS FIRST, display_sequence;
+exit;
+EOF
+```
+
+Expected 11 regions:
+- Bitcoin Dashboard Tabs (parent: null)
+- Overview, Technical, History (parent: Tabs)
+- Bitcoin Metrics, Period Selector, Candlestick Chart, Volume Chart (parent: Overview)
+- Period Selector, Price & Moving Averages (parent: Technical)
+- Price History (parent: History)
+
+- [ ] **Step 3: Verify IR columns**
+
+```bash
+sql -S -name ai <<'EOF'
+SELECT column_alias, report_label FROM apex_application_page_ir_col WHERE application_id = 129 AND page_id = 1 ORDER BY display_order;
+exit;
+EOF
+```
+
+Expected: 8 columns.
+
+- [ ] **Step 4: Verify P1_PERIOD item exists**
+
+```bash
+sql -S -name ai <<'EOF'
+SELECT item_name, display_as_code, item_default FROM apex_application_page_items WHERE application_id = 129 AND page_id = 1;
+exit;
+EOF
+```
+
+Expected: `P1_PERIOD`, `NATIVE_HIDDEN`, default `90`.
+
+- [ ] **Step 5: Verify dynamic action**
+
+```bash
+sql -S -name ai <<'EOF'
+SELECT da.dynamic_action_name, da.event_name, COUNT(a.action_id) action_count
+FROM apex_application_page_da da
+JOIN apex_application_page_da_acts a ON a.dynamic_action_id = da.dynamic_action_id
+WHERE da.application_id = 129 AND da.page_id = 1
+GROUP BY da.dynamic_action_name, da.event_name;
+exit;
+EOF
+```
+
+Expected: `Period Button Click`, `click`, 4 actions.
+
+- [ ] **Step 6: Verify view**
+
+```bash
+sql -S -name ai <<'EOF'
+SELECT object_name, status FROM user_objects WHERE object_name = 'V_BTC_MOVING_AVERAGES';
+exit;
+EOF
+```
+
+Expected: `VALID`.
+
+- [ ] **Step 7: No invalid objects**
+
+```bash
+sql -S -name ai <<'EOF'
+SELECT object_name, object_type, status FROM user_objects WHERE status = 'INVALID' ORDER BY object_name;
+exit;
+EOF
+```
+
+Expected: no rows.
