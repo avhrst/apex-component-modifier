@@ -1,6 +1,9 @@
-# CLAUDE.md — Oracle APEX Component Modifier Skill (via Oracle SQLcl MCP)
+# CLAUDE.md — Oracle APEX & SQLcl Skills (via Oracle SQLcl MCP)
 
-This repo defines a **Claude Code Skill** that can **export an Oracle APEX component (e.g., Page)**, **modify the exported files**, optionally **apply related DB changes**, and then **import the component back** — using **Oracle SQLcl’s built-in MCP Server**.
+This repo defines **Claude Code Skills** for working with **Oracle Database and APEX** through **Oracle SQLcl’s built-in MCP Server**:
+
+1. **apex-component-modifier** — Export/patch/import APEX components (pages, regions, items, etc.)
+2. **sqlcl** — General-purpose Oracle DB & APEX operations (SQL, schema inspection, data ops, Liquibase, Data Pump, CI/CD projects)
 
 ## What you’re building
 
@@ -72,24 +75,46 @@ To customize for your environment, create `.claude/settings.local.json`:
 apex-component-modifier/
 ├── .claude/
 │   ├── settings.json                            -- Shared skill settings (env vars)
+│   ├── commands/
+│   │   ├── apex-describe.md                     -- /apex-describe slash command
+│   │   ├── apex-export.md                       -- /apex-export slash command
+│   │   ├── apex-learn.md                        -- /apex-learn slash command
+│   │   └── sqlcl.md                             -- /sqlcl slash command
 │   └── skills/
-│       └── apex-component-modifier/
-│           ├── SKILL.md                         -- Skill definition (workflow + instructions)
+│       ├── apex-component-modifier/
+│       │   ├── SKILL.md                         -- APEX component patching skill
+│       │   ├── references/
+│       │   │   └── apex_imp/
+│       │   │       ├── README.md                -- Reference index & quick lookup table
+│       │   │       ├── apex_imp.md              -- wwv_flow_imp core (import engine, ID system, file format)
+│       │   │       ├── imp_page.md              -- wwv_flow_imp_page (pages, regions, items, buttons, DAs, IR/IG, charts, maps, cards)
+│       │   │       ├── imp_shared.md            -- wwv_flow_imp_shared (LOVs, auth, lists, templates, build options)
+│       │   │       ├── valid_values.md          -- All enumerated parameter values (region/item/process types, etc.)
+│       │   │       ├── app_install.md           -- apex_application_install (pre-import configuration)
+│       │   │       └── export_api.md            -- apex_export & SQLcl export commands
+│       │   ├── templates/
+│       │   │   ├── patch_plan.md                -- Change plan template
+│       │   │   └── validation_checklist.md      -- Post-patch validation checklist
+│       │   └── tools/
+│       │       ├── normalize_export_paths.md    -- Component selector → file path mapping
+│       │       └── patching_guidelines.md       -- Safe patching strategies & rules
+│       └── sqlcl/
+│           ├── SKILL.md                         -- SQLcl general-purpose skill
 │           ├── references/
-│           │   └── apex_imp/
-│           │       ├── README.md                -- Reference index & quick lookup table
-│           │       ├── apex_imp.md              -- wwv_flow_imp core (import engine, ID system, file format)
-│           │       ├── imp_page.md              -- wwv_flow_imp_page (pages, regions, items, buttons, DAs, IR/IG, charts, maps, cards)
-│           │       ├── imp_shared.md            -- wwv_flow_imp_shared (LOVs, auth, lists, templates, build options)
-│           │       ├── valid_values.md          -- All enumerated parameter values (region/item/process types, etc.)
-│           │       ├── app_install.md           -- apex_application_install (pre-import configuration)
-│           │       └── export_api.md            -- apex_export & SQLcl export commands
-│           ├── templates/
-│           │   ├── patch_plan.md                -- Change plan template
-│           │   └── validation_checklist.md      -- Post-patch validation checklist
-│           └── tools/
-│               ├── normalize_export_paths.md    -- Component selector → file path mapping
-│               └── patching_guidelines.md       -- Safe patching strategies & rules
+│           │   ├── README.md                    -- Reference index & decision tree
+│           │   ├── mcp_tools.md                 -- MCP server tools, connections, restriction levels
+│           │   ├── sql_plsql.md                 -- SQL queries, DML, DDL, PL/SQL patterns
+│           │   ├── schema_commands.md           -- INFO, DDL, DESC, CTAS, OERR, CODESCAN, REST
+│           │   ├── data_commands.md             -- LOAD, SPOOL, BRIDGE, DATAPUMP, SODA, SQLFORMAT
+│           │   ├── apex_commands.md             -- APEX export/import, component selectors, workspace
+│           │   ├── liquibase_commands.md        -- Schema capture, diff, update, rollback, tags
+│           │   └── project_commands.md          -- PROJECT init/export/stage/release/deploy (CI/CD)
+│           └── templates/
+│               ├── schema_inspection.md         -- Schema audit workflow
+│               ├── data_operations.md           -- Load/export/copy data workflow
+│               ├── apex_management.md           -- APEX app management workflow
+│               ├── migration_workflow.md        -- Schema comparison & migration workflow
+│               └── monitoring.md                -- Session & DB monitoring queries
 ├── .mcp.json                                    -- SQLcl MCP server config
 ├── CLAUDE.md                                    -- Project instructions (this file)
 └── README.md                                    -- Project overview & setup guide
