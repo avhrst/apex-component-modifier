@@ -1,5 +1,5 @@
 ---
-name: apex-component-modifier
+name: apex
 description: Export/patch/import Oracle APEX components via SQLcl MCP. Covers pages, regions, items, buttons, processes, DAs, validations, LOVs, auth schemes, templates, IR, IG, charts, maps, cards, and all shared components.
 argument-hint: "[conn|env] [app-id] [component] -- <change request>"
 disable-model-invocation: false
@@ -97,6 +97,6 @@ Re-export + diff. Deliver: change summary, modified files, patch diff, import lo
 
 ## Examples
 
-- `/apex-component-modifier PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV, create table APP_STATUS if missing.`
-- `/apex-component-modifier DEV 113 PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV.`
-- `/apex-component-modifier STG 113 LOV:23618973754424510000 -- Rename LOV display column and update dependent items on Page 3.`
+- `/apex PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV, create table APP_STATUS if missing.`
+- `/apex DEV 113 PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV.`
+- `/apex STG 113 LOV:23618973754424510000 -- Rename LOV display column and update dependent items on Page 3.`

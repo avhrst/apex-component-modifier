@@ -54,7 +54,7 @@ procedure create_page_plug (
     p_parent_plug_id              in number   default null,
     p_plug_display_point          in varchar2 default 'BODY',
     p_plug_template               in number   default null,        -- region template ID
-    p_plug_display_sequence       in varchar2 default null,
+    p_plug_display_sequence       in number   default null,
     p_plug_source_type            in varchar2 default 'NATIVE_STATIC',
     p_location                    in varchar2 default 'LOCAL',     -- LOCAL | REMOTE | WEB_SOURCE
     p_query_type                  in varchar2 default null,        -- SQL | TABLE | FUNC_BODY_RETURNING_SQL
@@ -193,7 +193,7 @@ procedure create_page_validation (
     p_validation2 in varchar2 default null,
     p_validation_type in varchar2,  -- ITEM_REQUIRED | FUNC_BODY_RETURNING_BOOLEAN | ...
     p_error_message in varchar2, p_always_execute in varchar2 default 'N',
-    p_when_button_pressed in varchar2 default null,
+    p_when_button_pressed in number default null,          -- button ID
     p_associated_item in number default null,
     p_error_display_location in varchar2 default 'ON_ERROR_PAGE'
     -- also: p_flow_id, p_flow_step_id

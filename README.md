@@ -54,9 +54,9 @@ This repo also provides read-only skills for inspection and pattern learning:
 cd your-project
 
 # Clone the repo into a temp directory and copy the skill
-git clone https://github.com/avhrst/apex-component-modifier.git /tmp/apex-skill
+git clone https://github.com/avhrst/apex.git /tmp/apex-skill
 mkdir -p .claude/skills
-cp -r /tmp/apex-skill/.claude/skills/apex-component-modifier .claude/skills/
+cp -r /tmp/apex-skill/.claude/skills/apex .claude/skills/
 rm -rf /tmp/apex-skill
 ```
 
@@ -76,7 +76,7 @@ If `sql` is not on your PATH, use the full path:
 | macOS   | `/usr/local/bin/sql`                 |
 | Windows | `C:\Users\<you>\Oracle\sqlcl\bin\sql` |
 
-> **Note:** This repo includes a `.mcp.json` file with the SQLcl MCP config. If you already have a `.mcp.json` in your project, merge the `sqlcl` entry into your existing config instead of overwriting it. The `${SQLCL_PATH:-sql}` syntax falls back to `sql` if `SQLCL_PATH` is not set.
+> **Note:** Running `claude mcp add` creates a `.mcp.json` in your project root. If you already have one, the new entry is merged automatically.
 
 ### 3. Create a saved SQLcl connection
 
@@ -116,19 +116,19 @@ For personal overrides (not committed to git), create `.claude/settings.local.js
 Open Claude Code in your project and run:
 
 ```
-/apex-component-modifier PAGE:1 -- Describe page 1
+/apex PAGE:1 -- Describe page 1
 ```
 
 ## Usage
 
 ```
-/apex-component-modifier PAGE:10 -- Add item P10_STATUS as a select list
+/apex PAGE:10 -- Add item P10_STATUS as a select list
 ```
 
 The skill uses your configured defaults. Override them inline when needed:
 
 ```
-/apex-component-modifier STG 200 PAGE:10 -- Add item P10_STATUS as a select list
+/apex STG 200 PAGE:10 -- Add item P10_STATUS as a select list
 ```
 
 Arguments:
@@ -155,13 +155,13 @@ When invoked, the skill follows a structured 9-step workflow:
 
 ```
 # Add a new page item with supporting table
-/apex-component-modifier PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV, create table APP_STATUS if missing
+/apex PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV, create table APP_STATUS if missing
 
 # Modify a shared LOV and update dependent items
-/apex-component-modifier LOV:23618973754424510000 -- Rename LOV display column and update dependent items on Page 3
+/apex LOV:23618973754424510000 -- Rename LOV display column and update dependent items on Page 3
 
 # Use a specific connection and app
-/apex-component-modifier STG 113 PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV
+/apex STG 113 PAGE:10 -- Add item P10_STATUS (select list) based on LOV STATUS_LOV
 ```
 
 ## How It Works
@@ -202,7 +202,7 @@ The `app-patterns/` directory (initially empty) stores conventions learned from 
 
 | Problem | Solution |
 |---------|----------|
-| Skill not listed in Claude Code | Ensure `SKILL.md` is at `.claude/skills/apex-component-modifier/SKILL.md` |
+| Skill not listed in Claude Code | Ensure `SKILL.md` is at `.claude/skills/apex/SKILL.md` |
 | SQLcl MCP not connecting | Verify `sql` is on your PATH or use full path in `claude mcp add` |
 | `No saved connection found` | Run `conn -save <alias> -savepwd` inside SQLcl |
 | Java version errors | SQLcl 25.2+ requires Java 17 or 21 — check with `java -version` |

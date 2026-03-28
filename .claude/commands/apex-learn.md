@@ -3,7 +3,7 @@ description: Learn patterns from an existing APEX app -- exports all components,
 argument-hint: "[app-id]"
 ---
 
-Learn patterns of APEX application `$ARGUMENTS` (or `$APEX_APP_ID`) by exporting and analyzing all components. Generate pattern files in `.claude/skills/apex-component-modifier/app-patterns/`.
+Learn patterns of APEX application `$ARGUMENTS` (or `$APEX_APP_ID`) by exporting and analyzing all components. Generate pattern files in `.claude/skills/apex/app-patterns/`.
 
 ## Before you start
 

@@ -78,7 +78,7 @@ APEX 24.2 source. All valid enumerated parameter values.
 | `NATIVE_PLSQL` | |
 | `NATIVE_FORM_FETCH` | Auto row fetch |
 | `NATIVE_FORM_DML` | Auto Row Processing |
-| `NATIVE_FORM_PROCESS` | Form DML |
+| `NATIVE_FORM_PROCESS` | Form DML (deprecated — use `NATIVE_FORM_DML`) |
 | `NATIVE_FORM_INIT` | |
 | `NATIVE_IG_DML` | |
 | `NATIVE_INVOKE_API` | |
@@ -144,7 +144,7 @@ APEX 24.2 source. All valid enumerated parameter values.
 | `apexafterrefresh` | After AJAX refresh |
 | `apexbeforepagesubmit` | |
 | `apexafterpagesubmit` | |
-| `apexafterclose dialog` | |
+| `apexafterclosedialog` | |
 | `apexaftercanceldialog` | |
 | `apexwindowresized` | |
 | `apexreadyend` | |
@@ -245,6 +245,39 @@ APEX 24.2 source. All valid enumerated parameter values.
 ## IG Edit Operations (`p_edit_operations`)
 
 `i` | `u` | `d` | `i:u` | `i:u:d`
+
+## Condition Types (`p_display_when_type`, `p_read_only_when_type`, `p_process_when_type`, etc.)
+
+| Value | Notes |
+|-------|-------|
+| `NEVER` | Never display/execute |
+| `ALWAYS` | Always display/execute |
+| `REQUEST_EQUALS_CONDITION` | Request = value |
+| `REQUEST_NOT_EQUAL_CONDITION` | Request != value |
+| `REQUEST_IN_CONDITION` | Request in comma-separated list |
+| `ITEM_IS_NULL` | Item value is null |
+| `ITEM_IS_NOT_NULL` | Item value is not null |
+| `ITEM_EQUALS_VALUE` | Item = value |
+| `ITEM_NOT_EQUAL_VALUE` | Item != value |
+| `ITEM_IN_LIST` | Item in comma-separated list |
+| `EXISTS` | SQL query returns rows |
+| `NOT_EXISTS` | SQL query returns no rows |
+| `EXPRESSION` | PL/SQL expression returns true |
+| `PLSQL_EXPRESSION` | PL/SQL expression |
+| `SQL_EXPRESSION` | SQL expression |
+| `FUNCTION_BODY` | PL/SQL function body returning boolean |
+| `CURRENT_PAGE_EQUALS_CONDITION` | Current page = value |
+| `CURRENT_PAGE_NOT_EQUAL_CONDITION` | Current page != value |
+| `CURRENT_PAGE_IN_CONDITION` | Current page in list |
+| `VALUE_OF_ITEM_IN_CONDITION_EQUALS_COND2` | Item = second condition value |
+
+## Authorization Caching (`p_caching`)
+
+| Value | Notes |
+|-------|-------|
+| `BY_USER_BY_SESSION` | Once per user per session |
+| `BY_USER_BY_PAGE_VIEW` | Every page view |
+| `NOCACHE` | No caching (evaluate every time) |
 
 ## Chart Types (`p_chart_type`)
 

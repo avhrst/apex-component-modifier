@@ -2,7 +2,8 @@
 .claude/*
 !.claude/skills/
 !.claude/commands/
-.claude/skills/apex-component-modifier/app-patterns/
+!.claude/agents/
+.claude/skills/apex/app-patterns/
 !.claude/settings.json
 examples/
 docs/superpowers/specs/
