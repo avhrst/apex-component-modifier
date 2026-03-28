@@ -54,14 +54,16 @@ ORDER BY object_type, object_name;
 
 ```sql
 -- run-sql
-SELECT a.table_name parent_table, a.constraint_name fk_name,
-       b.table_name child_table, a.column_name
-FROM user_cons_columns a
-JOIN user_constraints c ON a.constraint_name = c.constraint_name
+SELECT c.table_name child_table, c.constraint_name fk_name,
+       a.column_name fk_column, r.table_name parent_table,
+       b.column_name referenced_column
+FROM user_constraints c
+JOIN user_cons_columns a ON c.constraint_name = a.constraint_name
 JOIN user_constraints r ON c.r_constraint_name = r.constraint_name
 JOIN user_cons_columns b ON r.constraint_name = b.constraint_name
+  AND a.position = b.position
 WHERE c.constraint_type = 'R'
-ORDER BY a.table_name, b.table_name;
+ORDER BY c.table_name, c.constraint_name, a.position;
 ```
 
 ## 7. PL/SQL Code Summary

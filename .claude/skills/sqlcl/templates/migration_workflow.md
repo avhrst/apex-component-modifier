@@ -6,6 +6,7 @@ Workflows for comparing and migrating schemas using Liquibase and Data Pump.
 
 ### Step 1: Connect to target (what you want to update)
 ```
+-- Use the MCP "connect" tool (not run-sql or run-sqlcl)
 connect <TARGET_CONNECTION>
 ```
 
@@ -99,6 +100,15 @@ DATAPUMP EXPORT -schemas <SCHEMA> -directory DATA_PUMP_DIR -dumpfile schema_clon
 ```
 -- run-sqlcl (connected to target)
 DATAPUMP IMPORT -schemas <SOURCE_SCHEMA> -remap_schema <SOURCE_SCHEMA>:<TARGET_SCHEMA> -directory DATA_PUMP_DIR -dumpfile schema_clone.dmp
+```
+
+### Step 3: Verify imported objects
+```sql
+-- run-sql (connected to target)
+SELECT object_type, COUNT(*) cnt, SUM(CASE WHEN status = 'INVALID' THEN 1 ELSE 0 END) invalid
+FROM user_objects
+GROUP BY object_type
+ORDER BY cnt DESC;
 ```
 
 ## Full Project CI/CD Workflow

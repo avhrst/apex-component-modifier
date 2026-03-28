@@ -2,6 +2,8 @@
 
 Database and session monitoring queries.
 
+> **Privilege note:** Queries against `V$` views (`v$session`, `v$sql`, `v$lock`, `v$system_event`, `v$parameter`, `v$database`) require `SELECT_CATALOG_ROLE` or `SELECT ANY DICTIONARY` privilege. `DBA_*` views require DBA role or `SELECT_CATALOG_ROLE`. `USER_*` views and `DBTOOLS$MCP_LOG` are accessible without elevated privileges.
+
 ## Session Info
 
 ```sql
@@ -26,9 +28,10 @@ WHERE program LIKE '%SQLcl-MCP%';
 
 ```sql
 -- run-sql
-SELECT timestamp, tool_name, sql_text, execution_time, result_status
+-- DBTOOLS$MCP_LOG is auto-created in your schema on first MCP connection
+SELECT id, mcp_client, model, end_point_type, end_point_name, log_message
 FROM dbtools$mcp_log
-ORDER BY timestamp DESC
+ORDER BY id DESC
 FETCH FIRST 20 ROWS ONLY;
 ```
 
@@ -48,11 +51,14 @@ ORDER BY s.last_call_et DESC;
 
 ```sql
 -- run-sql
+-- Note: v$lock.id1 maps to object_id only for TM (DML) locks.
+-- For TX (transaction) locks, id1 contains rollback segment info.
+-- For comprehensive lock info, also query v$locked_object.
 SELECT s.sid, s.serial#, s.username, l.type, l.lmode, l.request,
        o.object_name, s.blocking_session
 FROM v$lock l
 JOIN v$session s ON l.sid = s.sid
-LEFT JOIN dba_objects o ON l.id1 = o.object_id
+LEFT JOIN all_objects o ON l.id1 = o.object_id AND l.type = 'TM'
 WHERE s.username IS NOT NULL AND (l.request > 0 OR l.lmode > 0)
 ORDER BY s.blocking_session NULLS LAST;
 ```
@@ -61,8 +67,9 @@ ORDER BY s.blocking_session NULLS LAST;
 
 ```sql
 -- run-sql
+-- Note: v$system_event has no average_wait_micro column; derive from time_waited_micro / total_waits
 SELECT event, total_waits, time_waited_micro/1000000 time_sec,
-       average_wait_micro/1000 avg_ms
+       ROUND(time_waited_micro / NULLIF(total_waits, 0) / 1000, 2) avg_ms
 FROM v$system_event
 WHERE wait_class != 'Idle'
 ORDER BY time_waited_micro DESC
@@ -72,7 +79,9 @@ FETCH FIRST 20 ROWS ONLY;
 ## Tablespace Usage
 
 ```sql
--- run-sql
+-- run-sql (requires DBA privileges: SELECT on DBA_TABLESPACE_USAGE_METRICS)
+-- Note: used_space and tablespace_size are in DB blocks; assumes 8KB block size.
+-- For exact block size: SELECT value FROM v$parameter WHERE name = 'db_block_size'
 SELECT tablespace_name,
        ROUND(used_space * 8192 / 1024 / 1024, 2) used_mb,
        ROUND(tablespace_size * 8192 / 1024 / 1024, 2) total_mb,
@@ -109,14 +118,22 @@ WHERE last_ddl_time > SYSDATE - 1
 ORDER BY last_ddl_time DESC;
 ```
 
-## Database Parameters
+## Database Info
 
 ```sql
--- run-sql
+-- run-sql (open_mode and log_mode are columns of v$database, not v$parameter)
+SELECT name db_name, db_unique_name, open_mode, log_mode
+FROM v$database;
+```
+
+## Key Initialization Parameters
+
+```sql
+-- run-sql (requires SELECT on V$PARAMETER or SELECT_CATALOG_ROLE)
 SELECT name, value FROM v$parameter
 WHERE name IN (
-  'db_name','db_unique_name','open_mode','log_mode',
-  'compatible','nls_characterset','nls_language','nls_territory',
+  'db_name','db_unique_name','compatible',
+  'nls_characterset','nls_language','nls_territory',
   'processes','sessions','sga_target','pga_aggregate_target'
 )
 ORDER BY name;
@@ -126,6 +143,7 @@ ORDER BY name;
 
 ```sql
 -- run-sql
+-- Note: timestamp column name may vary by APEX version (timestamp_tz, view_date, or time_stamp)
 SELECT application_id, page_id, COUNT(*) views,
        MIN(timestamp_tz) first_view, MAX(timestamp_tz) last_view
 FROM apex_workspace_activity_log

@@ -161,10 +161,12 @@ END pkg_employees;
 
 -- Stored procedure
 CREATE OR REPLACE PROCEDURE purge_old_logs(p_days NUMBER DEFAULT 90) AS
+  v_count NUMBER;
 BEGIN
   DELETE FROM app_log WHERE created_at < SYSDATE - p_days;
+  v_count := SQL%ROWCOUNT;  -- capture before COMMIT clears it
   COMMIT;
-  DBMS_OUTPUT.PUT_LINE(SQL%ROWCOUNT || ' rows purged');
+  DBMS_OUTPUT.PUT_LINE(v_count || ' rows purged');
 END;
 
 -- Function
@@ -234,12 +236,21 @@ FROM user_segments ORDER BY bytes DESC FETCH FIRST 20 ROWS ONLY;
 
 ```sql
 BEGIN
-  FOR r IN (SELECT object_name, object_type FROM user_objects WHERE status = 'INVALID') LOOP
+  FOR r IN (SELECT object_name, object_type FROM user_objects WHERE status = 'INVALID'
+            ORDER BY DECODE(object_type, 'PACKAGE BODY', 1, 'TYPE BODY', 1, 0)) LOOP
     BEGIN
-      EXECUTE IMMEDIATE 'ALTER ' || r.object_type || ' ' || r.object_name || ' COMPILE';
+      IF r.object_type = 'PACKAGE BODY' THEN
+        EXECUTE IMMEDIATE 'ALTER PACKAGE ' || r.object_name || ' COMPILE BODY';
+      ELSIF r.object_type = 'TYPE BODY' THEN
+        EXECUTE IMMEDIATE 'ALTER TYPE ' || r.object_name || ' COMPILE BODY';
+      ELSE
+        EXECUTE IMMEDIATE 'ALTER ' || r.object_type || ' ' || r.object_name || ' COMPILE';
+      END IF;
     EXCEPTION WHEN OTHERS THEN
       DBMS_OUTPUT.PUT_LINE('Failed: ' || r.object_type || ' ' || r.object_name || ' - ' || SQLERRM);
     END;
   END LOOP;
 END;
 ```
+
+**Note:** `ALTER PACKAGE BODY x COMPILE` is invalid syntax -- use `ALTER PACKAGE x COMPILE BODY` instead. Same for TYPE BODY.

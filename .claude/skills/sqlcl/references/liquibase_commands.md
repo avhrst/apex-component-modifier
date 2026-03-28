@@ -2,7 +2,9 @@
 
 All commands in this file use the `run-sqlcl` MCP tool.
 
-SQLcl integrates Oracle's enhanced Liquibase for schema versioning, comparison, and migration.
+SQLcl integrates Oracle's enhanced Liquibase for schema versioning, comparison, and migration. All `liquibase` commands can be shortened to `lb` (e.g., `lb generate-schema`).
+
+**Prerequisite:** Requires standalone SQLcl (not the one bundled with SQL Developer). The connected user must have `CREATE TABLE` privilege (for tracking tables).
 
 ## Generate Schema Changelog
 
@@ -32,19 +34,48 @@ liquibase generate-schema -split -grants -synonyms
 liquibase generate-schema -split -output-directory /path/to/changelogs
 ```
 
+### Additional generate-schema Options
+
+| Option | Description |
+|--------|-------------|
+| `-split` | Group files into subdirectories by object type |
+| `-grants` | Include grants (default: false) |
+| `-synonyms` | Include synonyms (default: false) |
+| `-output-directory` | Output directory path |
+| `-emit_schema` | Include schema name in generated SQL |
+| `-fail` | Set failOnError attribute to true |
+| `-replace` | Overwrite existing files |
+| `-runonchange` | Set runOnChange attribute |
+| `-runalways` | Set runAlways attribute |
+| `-context` | Context expression for filtering |
+| `-label` | Label expression for filtering |
+
+**Note:** `generate-schema` creates a temporary `DATABASECHANGELOG_EXPORT` table internally (auto-removed after capture).
+
 ## Generate Single Object
 
 Capture a specific database object:
 
 ```
-liquibase generate-db-object -object-type TABLE -object-name EMPLOYEES
-liquibase generate-db-object -object-type PACKAGE -object-name PKG_EMPLOYEES
-liquibase generate-db-object -object-type VIEW -object-name V_ACTIVE_EMPLOYEES
+lb generate-db-object -object-type TABLE -object-name EMPLOYEES
+lb generate-db-object -object-type PACKAGE -object-name PKG_EMPLOYEES
+lb generate-db-object -object-type VIEW -object-name V_ACTIVE_EMPLOYEES
+lb generate-db-object -change-type SQL -object-type TABLE -object-name EMPLOYEES
 ```
+
+Creates an XML file named `<object_name>_<object_type>.xml` in the current directory.
 
 ### Object Types
 
 `TABLE`, `VIEW`, `MATERIALIZED_VIEW`, `INDEX`, `SEQUENCE`, `TRIGGER`, `PACKAGE`, `PACKAGE_BODY`, `PROCEDURE`, `FUNCTION`, `TYPE`, `TYPE_BODY`, `SYNONYM`, `GRANT`
+
+### Related Generation Commands
+
+```
+lb generate-apex-object              -- capture APEX object
+lb generate-ords-module              -- capture ORDS REST module
+lb generate-ords-schema              -- capture ORDS schema config
+```
 
 ## Generate Control File
 

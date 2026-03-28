@@ -81,13 +81,20 @@ Execute SQLcl-specific commands. Extends capabilities beyond standard SQL.
 
 The MCP server's `-R` flag controls capabilities. Default is **level 4** (most restrictive).
 
-| Level | HOST | SPOOL | Scripts (@) | DML/DDL | Queries |
-|-------|------|-------|-------------|---------|---------|
+| Level | HOST / OS | SPOOL / SAVE / EDIT | Scripts (@, @@, START) | DML/DDL | Queries |
+|-------|-----------|---------------------|------------------------|---------|---------|
 | 0 | Yes | Yes | Yes | Yes | Yes |
 | 1 | No | Yes | Yes | Yes | Yes |
 | 2 | No | No | Yes | Yes | Yes |
-| 3 | No | No | Limited | Yes | Yes |
+| 3 | No | No | No | Yes | Yes |
 | 4 | No | No | No | Yes | Yes |
+
+**Level differences:**
+- **Level 0** — Full access, no restrictions.
+- **Level 1** — Blocks HOST, `!`, `$` (OS shell-out commands).
+- **Level 2** — Also blocks SPOOL, SAVE, EDIT, STORE (file I/O).
+- **Level 3** — Also blocks `@`, `@@`, START (script execution).
+- **Level 4** — Most restrictive (MCP default). Blocks additional sensitive operations.
 
 **Configuration in `.mcp.json`:**
 ```json
@@ -106,9 +113,9 @@ The MCP server's `-R` flag controls capabilities. Default is **level 4** (most r
 ### DBTOOLS$MCP_LOG
 Logs every MCP interaction:
 ```sql
-SELECT timestamp, tool_name, sql_text, execution_time, result_status
+SELECT id, mcp_client, model, end_point_type, end_point_name, log_message
 FROM dbtools$mcp_log
-ORDER BY timestamp DESC
+ORDER BY id DESC
 FETCH FIRST 20 ROWS ONLY;
 ```
 
@@ -122,6 +129,12 @@ WHERE program LIKE '%SQLcl-MCP%';
 - **MODULE** = MCP client name
 - **ACTION** = LLM model name
 - **PROGRAM** = `SQLcl-MCP`
+
+### Query Identification
+All LLM-generated queries include a `/* LLM in use ... */` comment, visible in `V$SQL`, ASH, and AWR reports.
+
+### Maintenance Note
+`DBTOOLS$MCP_LOG` has no automatic cleanup. Regularly purge old records to avoid table growth.
 
 ## Connection Workflow
 

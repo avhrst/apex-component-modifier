@@ -61,27 +61,50 @@ apex export -applicationid 113 -split -dir /path/to/output
 | `-split` | `-sp` | Split into multiple files |
 | `-expComponents` | | Component selector(s): `TYPE:ID` |
 | `-dir` | | Output directory |
-| `-skipExportDate` | `-sked` | Exclude timestamp (cleaner diffs) |
+| `-skipExportDate` | `-sked` | Exclude timestamp (cleaner diffs; default: true) |
 | `-nochecksum` | `-noch` | Overwrite even if unchanged |
 | `-workspaceid` | `-woi` | Workspace ID |
-| `-expWorkspace` | | Export workspace definition |
+| `-expWorkspace` | `-exwo` | Export workspace definition |
 | `-expMinimal` | | Minimal workspace (users, groups only) |
 | `-expFiles` | | Include workspace static files |
+| `-expOriginalIds` | | Preserve original component IDs |
+| `-expTranslations` | | Include translations |
+| `-expPubReports` | | Include public saved reports |
+| `-expSavedReports` | | Include saved interactive reports |
+| `-expSupportingObjects` | | Supporting objects: `Y`, `N`, `I` |
+| `-expComments` | | Include developer comments |
+| `-list` | | List exportable components (use with `-applicationid`) |
+| `-changesSince` | | Filter `-list` to changes on/after a date |
+| `-changesBy` | | Filter `-list` to changes by a specific user |
 
 ### Component Selector Syntax
 
 Format: `TYPE:ID`
 
-| Type | Example | Targets |
-|------|---------|---------|
-| `PAGE` | `PAGE:10` | Page by page number |
-| `AUTHORIZATION` | `AUTHORIZATION:12345678` | Authorization scheme by ID |
-| `LOV` | `LOV:12345678` | List of Values by ID |
-| `LIST` | `LIST:12345678` | Navigation list by ID |
-| `PLUGIN` | `PLUGIN:12345678` | Plugin by ID |
-| `TEMPLATE` | `TEMPLATE:12345678` | Template by ID |
+| Type | ID Format | Targets |
+|------|-----------|---------|
+| `PAGE` | Page number | `PAGE:10` — page by number |
+| `AUTHORIZATION` | Internal ID | `AUTHORIZATION:12345678` — auth scheme |
+| `AUTHENTICATION` | Internal ID | `AUTHENTICATION:12345678` — auth scheme |
+| `LOV` | Internal ID | `LOV:12345678` — list of values |
+| `LIST` | Internal ID | `LIST:12345678` — navigation list |
+| `PLUGIN` | Internal ID | `PLUGIN:12345678` — plugin |
+| `BREADCRUMB` | Internal ID | `BREADCRUMB:12345678` — breadcrumb |
+| `BREADCRUMB_ENTRY` | Internal ID | `BREADCRUMB_ENTRY:12345678` |
+| `PAGE_TEMPLATE` | Internal ID | `PAGE_TEMPLATE:12345678` |
+| `REGION_TEMPLATE` | Internal ID | `REGION_TEMPLATE:12345678` |
 
 Multiple components: space-separated in quotes: `"PAGE:1 PAGE:2 LOV:123"`
+
+**Discovering IDs:** Use `apex export -list -applicationid 113` to get TYPE:ID values, or query:
+```sql
+-- Via run-sql
+SELECT * FROM apex_appl_export_comps WHERE application_id = 113;
+```
+
+**Note:** Pages use the page number as ID. All other component types use internal numeric IDs.
+
+**Import limitation:** Component exports can only be imported into the **same application** they were exported from.
 
 ## APEX Export Aliases
 
@@ -108,7 +131,7 @@ Import is done by running the exported SQL install scripts:
 @f113/install_component.sql        -- partial (component export)
 ```
 
-**Note:** At restriction level 4 (default MCP), `@` script execution is blocked. Use restriction level ≤ 1 for imports, or run the install script content directly via `run-sql`.
+**Note:** At restriction level 4 (default MCP), `@` script execution is blocked. Use restriction level ≤ 2 for imports (level 2 allows scripts), or run the install script content directly via `run-sql`.
 
 ### Different Environment (pre-import config)
 
@@ -197,7 +220,7 @@ SELECT authorization_scheme_id, authorization_scheme_name, scheme_type
 FROM apex_application_authorization WHERE application_id = 113;
 
 -- APEX workspace log (recent activity)
-SELECT * FROM apex_workspace_log_summary
+SELECT * FROM apex_workspace_activity_log
 WHERE application_id = 113
-ORDER BY timestamp_tz DESC FETCH FIRST 20 ROWS ONLY;
+ORDER BY view_date DESC FETCH FIRST 20 ROWS ONLY;
 ```

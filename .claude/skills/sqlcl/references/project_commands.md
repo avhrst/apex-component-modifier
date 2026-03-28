@@ -18,7 +18,7 @@ Creates a project directory structure:
 
 ```
 myapp/
-├── project.json                   -- project configuration
+├── .dbtools/                      -- project configuration files
 ├── src/                           -- source files (exported objects)
 │   ├── database/
 │   │   ├── HR/
@@ -29,9 +29,10 @@ myapp/
 │   │   └── APEX_APP/
 │   └── apex/
 │       └── f113/
-├── releases/                      -- versioned releases
-├── artifacts/                     -- deployable ZIPs
-└── .liquibase/                    -- Liquibase tracking
+├── dist/                          -- distributable scripts
+│   ├── next/                      -- current working changes
+│   └── releases/                  -- versioned releases (1.0.0, 1.1.0, ...)
+└── artifacts/                     -- deployable ZIPs
 ```
 
 ### Init Options
@@ -78,8 +79,11 @@ This:
 For changes that can't be auto-detected (DML scripts, data fixes, grants):
 
 ```
-project stage add-custom -file /path/to/custom_script.sql -description "Load seed data"
+project stage add-custom -file-name dml_seed_data
+project stage add-custom -file-name dml_countries
 ```
+
+Creates a changeset file you can then edit to add your custom SQL/DML statements.
 
 ## Create Release
 
@@ -89,7 +93,7 @@ Finalize staged changes into a versioned release:
 project release
 ```
 
-Creates a release directory under `releases/` with version number, changelogs, and metadata.
+Moves contents of `dist/next/` to a versioned release folder (e.g., `dist/releases/1.2.0/`), then creates a new `dist/next/` for future work. Once released, contents should never be modified.
 
 ### Release Options
 
@@ -117,20 +121,21 @@ project gen-artifact -output /path/to/artifacts
 
 ## Deploy
 
-Deploy an artifact to a target environment:
+Deploy an artifact to a target environment. Connect to the target DB first, then deploy:
 
 ```
-project deploy -connection PROD
-project deploy -connection STG -version 1.2.0
+project deploy -file artifacts/myapp-1.2.0.zip
 ```
 
 ### Deploy Options
 
 | Parameter | Description |
 |-----------|-------------|
-| `-connection` | Target connection alias |
+| `-file` | Path to the artifact ZIP file |
 | `-version` | Specific version to deploy |
-| `-dry-run` | Preview without executing |
+| `-debug` | Additional diagnostic output |
+
+**Note:** Connect to the target database before deploying. The deploy command applies the artifact's `install.sql` using Liquibase update.
 
 ## Project Configuration (project.json)
 
@@ -173,21 +178,60 @@ project deploy -connection STG -version 1.2.0
 
 ### Deployment
 ```
-1. project deploy -connection STG -dry-run    -- preview
-2. project deploy -connection STG             -- deploy to staging
+1. Connect to STG database
+2. project deploy -file artifacts/myapp-1.1.0.zip   -- deploy to staging
 3. (test and validate)
-4. project deploy -connection PROD            -- deploy to production
+4. Connect to PROD database
+5. project deploy -file artifacts/myapp-1.1.0.zip   -- deploy to production
 ```
 
 ### Version Upgrades
 
 Projects support upgrading from any version to any later version. If production is at v1.0 and development is at v1.3, deploying v1.3 to production will apply all changes from v1.0 → v1.1 → v1.2 → v1.3 in order.
 
+## Additional Subcommands
+
+### Verify Project
+```
+project verify
+```
+Run validation checks to ensure project integrity before releasing.
+
+### View Configuration
+```
+project config
+```
+Display the current project configuration (schemas, APEX apps, options).
+
+### Subcommand Aliases
+
+| Command | Alias |
+|---------|-------|
+| `project init` | `project in` |
+| `project export` | `project ex` |
+| `project stage` | `project st` |
+| `project release` | `project re` |
+| `project gen-artifact` | `project ga` |
+| `project deploy` | `project dp` |
+| `project verify` | `project v` |
+| `project config` | `project cfg` |
+
+All subcommands support `-verbose` and `-debug` flags for detailed output.
+
+## Stateful vs Stateless Objects
+
+Projects handle different object types differently at deploy time:
+
+- **Stateful** (tables): XML changesets; SQLcl dynamically generates DDL at deploy by comparing target state. Can handle CREATE or ALTER automatically.
+- **Stateless** (PL/SQL, views): SQL changesets; computed at `stage` time from local src, deployed as-is. The SQL is not dynamically generated at deploy time.
+
 ## Integration with Git
 
 Projects are designed to be Git-friendly:
 - `src/` contains split exports (one file per object)
 - `-skip-export-date` eliminates noisy timestamp diffs
-- `project stage` uses Git diff to detect changes
+- `project stage` uses Git diff to detect changes (compares current branch to base)
+- `project export` creates a new branch for the export
 - Releases are immutable snapshots
 - Artifacts are portable and self-contained
+- Uses "roll-forward" strategy on deploy failures (apply fixes, don't revert)

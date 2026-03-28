@@ -89,11 +89,13 @@ Then LOAD from CSV.
 ## Row Count Audit
 
 ```sql
--- run-sql
+-- run-sql (run SET SERVEROUTPUT ON via run-sqlcl first)
+DECLARE
+  v_cnt NUMBER;
 BEGIN
   FOR r IN (SELECT table_name FROM user_tables ORDER BY table_name) LOOP
-    EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM ' || r.table_name INTO :cnt;
-    DBMS_OUTPUT.PUT_LINE(RPAD(r.table_name, 30) || ' : ' || :cnt);
+    EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM ' || r.table_name INTO v_cnt;
+    DBMS_OUTPUT.PUT_LINE(RPAD(r.table_name, 30) || ' : ' || v_cnt);
   END LOOP;
 END;
 ```

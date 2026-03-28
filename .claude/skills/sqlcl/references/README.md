@@ -25,5 +25,10 @@ User request
 ├── Schema diff / migration / changelog → liquibase_commands.md (use run-sqlcl)
 ├── Data Pump export/import → data_commands.md (use run-sqlcl)
 ├── CI/CD project setup / deploy → project_commands.md (use run-sqlcl)
+├── Error lookup (ORA/PLS codes) → schema_commands.md (use run-sqlcl: OERR)
+├── Code quality scan → schema_commands.md (use run-sqlcl: CODESCAN)
+├── REST / ORDS modules → schema_commands.md (use run-sqlcl: REST)
+├── Output formatting → data_commands.md (use run-sqlcl: SET SQLFORMAT)
+├── Monitoring / diagnostics → mcp_tools.md (use run-sql for V$ views)
 └── Connection / MCP setup → mcp_tools.md
 ```

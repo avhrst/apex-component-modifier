@@ -14,21 +14,15 @@ Output includes: column names, types, nullable, default values, primary key, ind
 
 ### INFO+ — Extended Info
 
-Adds foreign keys, check constraints, and detailed column comments.
+Adds column statistics (instead of column comments shown in INFO).
 
 ```
 INFO+ employees
 ```
 
-### INFO options
+**Note:** `INFO` shows column comments; `INFO+` replaces them with column-level statistics.
 
-```
--- Show index details
-SET INFO INDEX ON
-
--- Show statistics
-SET INFO STATS ON
-```
+Also works with PL/SQL objects (procedures, functions) — shows a ready-to-use call template.
 
 ## DDL — Generate DDL
 
@@ -42,6 +36,7 @@ DDL trg_emp_audit                 -- trigger
 DDL idx_emp_dept                  -- index
 DDL emp_seq                       -- sequence
 DDL t_varchar2_tab                -- type
+DDL employees SAVE emp.sql        -- save DDL to file (avoids SPOOL)
 ```
 
 ### DDL Options
@@ -49,10 +44,16 @@ DDL t_varchar2_tab                -- type
 ```
 SET DDL STORAGE OFF                -- exclude storage clauses
 SET DDL TABLESPACE OFF             -- exclude tablespace
-SET DDL SEGMENT_ATTRIBUTES OFF     -- exclude segment attrs
-SET DDL CONSTRAINTS ON             -- include constraints (default)
-SET DDL REF_CONSTRAINTS ON         -- include FK constraints
+SET DDL SEGMENT_ATTRIBUTES OFF     -- exclude segment attrs (also disables STORAGE)
+SET DDL CONSTRAINTS ON             -- include constraints (default ON)
+SET DDL REF_CONSTRAINTS ON         -- include FK constraints (default ON)
+SET DDL CONSTRAINTS_AS_ALTER ON    -- emit constraints as ALTER statements
 SET DDL PRETTY ON                  -- formatted output
+SET DDL SQLTERMINATOR ON           -- include ; or / terminators
+SET DDL PARTITIONING ON            -- include partitioning clauses
+SET DDL SPECIFICATION ON           -- include package spec
+SET DDL BODY ON                    -- include package body
+SET DDL RESET                      -- reset all options to defaults
 ```
 
 ### DDL for all objects of a type
@@ -100,36 +101,58 @@ OERR ORA 12154         -- TNS could not resolve
 
 ## CODESCAN — Code Quality
 
-Scan PL/SQL code for quality issues:
+Scan PL/SQL code for quality issues. Two modes:
 
+### Interactive Mode (real-time feedback on compile)
 ```
--- Enable code scanning
-SET CODESCAN ON
-
--- Scan a specific file
-SET CODESCAN ON
-@my_package.sql
-
--- Scan a directory
-SET CODESCAN DIR /path/to/sql/files
+SET CODESCAN ON                    -- enable all scan categories
+SET CODESCAN OFF                   -- disable all
+SET CODESCAN SQLINJECTION ON       -- enable only SQL injection checks
+SET CODESCAN SQLPERFORMANCE ON     -- enable performance checks
+SET CODESCAN SQLBESTPRACTICE ON    -- enable best practice checks
+SHOW CODESCAN                      -- show current settings
 ```
 
-CODESCAN rules include:
-- G-1010: Always have a matching `EXCEPTION` block
-- G-2180: Never use `SELECT *`
-- G-3130: Avoid GOTO statements
-- And many more following PL/SQL coding standards
+### Directory Scan Mode (batch scan files)
+```
+CODESCAN -path /path/to/sql/files
+CODESCAN -path /path/to/sql/files -format json -output scan_results.json
+CODESCAN -path /path/to/sql/files -format text
+CODESCAN -path /path/to/sql/files -ignore G-2180
+```
+
+### CODESCAN Parameters
+| Parameter | Description |
+|-----------|-------------|
+| `-path` | Directory of SQL/PLS/PLB files to scan |
+| `-format` | Output format: `json` or `text` |
+| `-output` | Output file path |
+| `-ignore` | Rule number to ignore |
+| `-settings` | Custom settings file |
+
+### Rule Prefixes
+- `G-*` — Trivadis PL/SQL coding guidelines (e.g., G-2180: Never use quoted identifiers)
+- `PSR-*` — Oracle-documented performance rules
 
 ## REST — ORDS Module Management
 
-Manage Oracle REST Data Services modules:
+Export and inspect Oracle REST Data Services modules:
 
 ```
-REST list                          -- list all REST modules
-REST enable-schema                 -- enable schema for REST
-REST disable-schema                -- disable schema for REST
-REST modules                       -- list modules
-REST privileges                    -- list privileges
+REST export                        -- export all module definitions
+REST export <module_name>          -- export a specific module
+REST export <module_prefix>        -- export by base path prefix
+REST modules                       -- list available modules
+REST privileges                    -- list existing privileges
+REST schemas                       -- list REST-enabled schemas
+```
+
+**Note:** To enable a schema for REST, use PL/SQL via `run-sql`:
+```sql
+BEGIN
+  ORDS.ENABLE_SCHEMA(p_enabled => TRUE, p_schema => 'MY_SCHEMA');
+  COMMIT;
+END;
 ```
 
 ## ALIAS — Saved Commands

@@ -7,24 +7,35 @@ All commands in this file use the `run-sqlcl` MCP tool unless noted.
 Load CSV/delimited files into a table.
 
 ```
-LOAD employees employees.csv
-LOAD employees /path/to/data.csv
+LOAD TABLE employees employees.csv
+LOAD TABLE employees /path/to/data.csv
+```
+
+### Load Modes
+```
+LOAD TABLE employees data.csv              -- load into existing table
+LOAD TABLE employees data.csv NEW          -- create table AND load data
+LOAD TABLE employees data.csv SHOW         -- preview DDL without executing
+LOAD TABLE employees data.csv CREATE       -- create table only, no data load
+```
+
+### Configuration (SET before LOAD)
+```
+SET LOADFORMAT csv                         -- set input format
+SET LOADFORMAT DELIMITER "|"               -- custom field delimiter
+SET LOADFORMAT ENCLOSURES '"'              -- custom enclosure character
+SET LOAD SCAN_ROWS 500                     -- rows to scan for DDL (max 5000)
+SET LOAD DATE_FORMAT DD-MM-YYYY            -- date format for DATE columns
+SET LOAD COLSIZE ROUND                     -- column sizing: ACTUAL | ROUND | MAX
+SET LOAD CLEAN_NAMES TRANSFORM             -- auto-sanitize column names
+SET LOAD ERRORS UNLIMITED                  -- don't abort on row errors
 ```
 
 **Requirements:**
 - CSV must have a header row matching column names
-- Processes in 50-row batches
-- UTF-8 encoding
-
-**Advanced options:**
-```
-LOAD employees data.csv
-  NEW                              -- create table from CSV structure
-  SHOW                             -- show the generated SQL without executing
-  DELIMITER "|"                    -- custom delimiter
-  ENCLOSURE '"'                    -- custom enclosure char
-  ENCODING UTF-8                   -- specify encoding
-```
+- If AUTOCOMMIT is set, commits every 10 batches
+- Load terminates after 50 errors by default
+- Scan caps at 5000 rows for DDL generation (wide values after that may cause ORA-12899)
 
 ## SET SQLFORMAT — Output Formatting
 
@@ -43,6 +54,7 @@ Control query output format. Use before running queries via `run-sql`.
 | SQL*Loader | `SET SQLFORMAT loader` | SQL*Loader control files |
 | Pipe-delimited | `SET SQLFORMAT delimited` | Generic delimited |
 | Fixed width | `SET SQLFORMAT fixed` | Fixed-width files |
+| Tab-separated | `SET SQLFORMAT text` | Text export with tab delimiters |
 
 ### Inline format hints
 
@@ -65,61 +77,73 @@ SELECT /*csv*/ * FROM employees;
 SPOOL OFF
 ```
 
-## BRIDGE — External Data Sources
+## BRIDGE — Cross-Database Data Movement
 
-Query external data sources directly as SQL tables.
+Move data between databases via JDBC without database links.
+
+Syntax: `BRIDGE <targetTable> AS "<jdbcURL>"(<sqlQuery>);`
 
 ```
--- Query a CSV file
-BRIDGE csv_data AS "SELECT * FROM EXTERNAL('/path/to/data.csv')";
-SELECT * FROM csv_data WHERE amount > 1000;
+-- Create local table from remote Oracle query
+BRIDGE remote_emps AS "jdbc:oracle:thin:user/pass@host:1521/service"(SELECT * FROM employees);
 
--- Query Excel file
-BRIDGE xls_data AS "SELECT * FROM EXTERNAL('/path/to/workbook.xlsx')";
+-- Insert into existing local table from remote
+BRIDGE INSERT INTO local_emps AS "jdbc:oracle:thin:user/pass@host:1521/service"(SELECT * FROM employees);
 
--- Query another database via JDBC
-BRIDGE pg_data AS "SELECT * FROM EXTERNAL('jdbc:postgresql://host/db','user','pass','SELECT * FROM orders')";
+-- Copy from another database (e.g., PostgreSQL)
+BRIDGE pg_orders AS "jdbc:postgresql://host/db"(SELECT * FROM orders);
 ```
+
+**Note:** Requires appropriate JDBC drivers on the classpath. Also supports LONG columns.
 
 ## DATAPUMP — Data Pump Export/Import
 
-Wrapper over DBMS_DATAPUMP for schema and table-level operations.
+Wrapper over DBMS_DATAPUMP for schema and table-level operations. Can also use `dp` as shorthand.
 
 ### Export Schema
 ```
 DATAPUMP EXPORT -schemas HR -directory DATA_PUMP_DIR -dumpfile hr_export.dmp -logfile hr_export.log
+dp export -s HR -d DATA_PUMP_DIR -f hr_export.dmp -lf hr_export.log
 ```
 
 ### Export Tables
 ```
-DATAPUMP EXPORT -schemas HR -tables EMPLOYEES,DEPARTMENTS -directory DATA_PUMP_DIR -dumpfile tables.dmp
+dp export -s HR -tables EMPLOYEES,DEPARTMENTS -d DATA_PUMP_DIR -f tables.dmp
 ```
 
 ### Import Schema
 ```
-DATAPUMP IMPORT -schemas HR -directory DATA_PUMP_DIR -dumpfile hr_export.dmp -logfile hr_import.log
+dp import -s HR -d DATA_PUMP_DIR -f hr_export.dmp -lf hr_import.log
 ```
 
-### Import Tables
+### Import with Remap
 ```
-DATAPUMP IMPORT -schemas HR -tables EMPLOYEES -directory DATA_PUMP_DIR -dumpfile tables.dmp
+dp import -s HR -d DATA_PUMP_DIR -f hr_export.dmp -remaptablespace USERS=DATA
 ```
 
 ### Common Parameters
 
-| Parameter | Description |
-|-----------|-------------|
-| `-schemas` | Schema(s) to export/import |
-| `-tables` | Specific table(s) |
-| `-directory` | Oracle directory object for dump/log files |
-| `-dumpfile` | Dump file name |
-| `-logfile` | Log file name |
-| `-jobname` | Data Pump job name |
-| `-content` | `ALL`, `DATA_ONLY`, `METADATA_ONLY` |
-| `-exclude` | Exclude object types (e.g., `STATISTICS`) |
-| `-include` | Include only specified types |
-| `-remap_schema` | Map source schema to target |
-| `-remap_tablespace` | Map source tablespace to target |
+| Long Form | Short | Description |
+|-----------|-------|-------------|
+| `-schemas` | `-s` | Schema(s) to export/import |
+| `-tables` | | Specific table(s) (22.1+) |
+| `-directory` | `-d` | Oracle directory object for dump/log files |
+| `-dumpfile` | `-f` | Dump file name |
+| `-logfile` | `-lf` | Log file name |
+| `-jobname` | `-j` | Data Pump job name |
+| `-noexec` | `-ne` | Preview only — show PL/SQL without executing |
+| `-verbose` | | Additional diagnostic info |
+| `-wait` | | Wait for completion, log to console |
+| `-excludeexpr` | `-ex` | Exclude object types (e.g., `"IN ('GRANT','INDEX')"`) |
+| `-excludelist` | `-el` | Exclude specific objects |
+| `-remaptablespace` | `-rt` | Map source tablespace to target |
+| `-encryptionpassword` | `-enp` | Encrypt/decrypt dump files |
+| `-copycloud` | `-cc` | Copy dumpfile to/from Oracle Object Store |
+
+### Defaults
+- If no schema specified, exports the current schema
+- If no directory specified, uses `DATA_PUMP_DIR`
+- Job name defaults to `isql_<n>`; dump/log files default to `<jobname>.DMP/.LOG`
 
 ### Check Data Pump directory
 ```sql
@@ -129,23 +153,31 @@ SELECT directory_name, directory_path FROM all_directories WHERE directory_name 
 
 ## SODA — JSON Document Store
 
-Simple Oracle Document Access for JSON collections (requires Oracle 21c+ or SODA-enabled schema).
+Simple Oracle Document Access for JSON collections. Requires `SODA_APP` role plus `CREATE SESSION` and `CREATE TABLE` privileges.
+
+**Note:** SODA commands are case-sensitive (use lowercase `soda`).
 
 ```
-SODA list                          -- list collections
-SODA create employees_json         -- create collection
-SODA insert employees_json {"name":"John","dept":10}
-SODA get employees_json            -- get all documents
-SODA get employees_json -k <key>   -- get by key
-SODA count employees_json          -- count documents
-SODA drop employees_json           -- drop collection
-SODA remove employees_json -f {"dept":10}  -- remove by filter
+soda list                          -- list collections
+soda create employees_json         -- create collection
+soda insert employees_json {"name":"John","dept":10}
+soda get employees_json -all       -- list keys of all documents
+soda get employees_json -k <key>   -- get document by key
+soda get employees_json -klist <k1> <k2>  -- get by multiple keys
+soda get employees_json -f {"dept":10}    -- get by QBE filter
+soda count employees_json          -- count all documents
+soda count employees_json {"dept":10}     -- count matching filter
+soda replace employees_json <key> {"name":"Jane","dept":20}  -- replace document
+soda remove employees_json -k <key>       -- remove by key
+soda remove employees_json -f {"dept":10} -- remove by filter
+soda drop employees_json           -- drop collection (commit writes first)
 ```
 
 ### SODA Query by Example (QBE)
 ```
-SODA get employees_json -f {"dept":10}
-SODA get employees_json -f {"salary":{"$gt":50000}}
+soda get employees_json -f {"dept":10}
+soda get employees_json -f {"salary":{"$gt":50000}}
+soda get employees_json -f {"name":{"$startsWith":"A"}}
 ```
 
 ## Common Data Workflows

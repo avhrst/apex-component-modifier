@@ -43,7 +43,7 @@ Always verify connection first:
 
 1. `list-connections` — find available saved connections
 2. `connect` with `connection_name` = `$SQLCL_CONNECTION` (or user-specified)
-3. Verify: `run-sql` → `SELECT USER, SYS_CONTEXT('USERENV','DB_NAME') FROM dual`
+3. Verify: `run-sql` → `SELECT USER, SYS_CONTEXT('USERENV','DB_NAME') db_name FROM dual`
 
 ### 1) Understand the request
 
@@ -133,7 +133,7 @@ liquibase generate-schema -split                    -- capture schema
 liquibase diff -referenceUrl jdbc:oracle:...        -- compare schemas
 liquibase update -changelog controller.xml          -- apply changes
 liquibase status -changelog controller.xml          -- check pending
-liquibase rollback -count 1 -changelog controller.xml
+liquibase rollback -changelog controller.xml -count 1
 ```
 
 ### Data (`run-sqlcl`)
@@ -179,9 +179,9 @@ Or use inline hints: `SELECT /*csv*/ * FROM employees`
 |---------|--------|
 | Connection refused | `list-connections`, verify alias, retry |
 | ORA-* error | `run-sqlcl` → `OERR ORA <number>`, diagnose, fix |
-| PLS-* error | `run-sql` → `SHOW ERRORS`, fix compilation |
+| PLS-* error | `run-sqlcl` → `SHOW ERRORS`, fix compilation |
 | APEX export empty | Verify APP_ID, workspace, connection privileges |
-| Liquibase lock | `run-sqlcl` → `liquibase releaselocks` |
+| Liquibase lock | `run-sqlcl` → `liquibase release-locks` |
 | Permission denied | Check user privileges: `SELECT * FROM session_privs` |
 | Unknown command | Check `references/` for correct syntax |
 
