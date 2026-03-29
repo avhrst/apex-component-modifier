@@ -29,7 +29,7 @@ A repeatable workflow:
 ### Oracle SQLcl CLI
 - The skill runs SQLcl commands via the Bash tool (not MCP).
 - Requires **SQLcl 25.1+** and **Java 17 or 21**.
-- Uses saved connections in `~/.dbtools`; create one with `conn -save ... -savepwd ...`.
+- Uses saved connections in `~/.dbtools`; connect using `sql -name <connection>` (e.g., `sql -name dvc`).
 - `sql` must be on the PATH so the skill can invoke it from Bash.
 
 ---
