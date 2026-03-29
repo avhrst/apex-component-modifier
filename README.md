@@ -29,6 +29,9 @@ All steps run through the SQLcl MCP server — no manual SQL or file editing req
 | **Cards** | Cards regions, card components, media, actions, icons |
 | **Forms** | Form regions with DML processes |
 | **Faceted Search** | Faceted search regions and facets |
+| **Navigation** | Navigation menus, lists, breadcrumbs |
+| **Automation** | Automations (actions, schedules) |
+| **Web sources** | REST data sources and web source modules |
 | **Shared components** | LOVs, authorization schemes, list entries, templates, build options, static files |
 
 ## Companion Skills
@@ -40,6 +43,7 @@ This repo also provides read-only skills for inspection and pattern learning:
 | **apex-describe** | `/apex-describe PAGE:5` | Describe an APEX page or component by reading its export |
 | **apex-export** | `/apex-export PAGE:5` | Export a component without modification (read-only) |
 | **apex-learn** | `/apex-learn` | Export all components from an app, analyze conventions, and generate pattern files for future patching |
+| **sqlcl** | `/sqlcl` | General-purpose Oracle DB operations — SQL, schema inspection, data ops, Liquibase, Data Pump, CI/CD projects |
 
 ## Prerequisites
 
@@ -186,6 +190,9 @@ Pre-built patterns under `global-patterns/` for common component types:
 - Interactive Reports, Interactive Grids, Classic Reports
 - Cards (regions, components, media, actions, icons)
 - JET Charts, Form regions, Dynamic Actions, Faceted Search
+- LOVs, Authorization schemes, Automations
+- Page processes, computations, validations, branches
+- Navigation, Map regions, Web sources
 
 ### App-Specific Patterns
 

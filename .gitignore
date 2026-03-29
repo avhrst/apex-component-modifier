@@ -5,7 +5,6 @@
 !.claude/agents/
 .claude/skills/apex/app-patterns/
 !.claude/settings.json
-examples/*
-!examples/catalog.json
+examples/
 docs/superpowers/specs/
 .remember/
