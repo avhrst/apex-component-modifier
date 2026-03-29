@@ -1,6 +1,6 @@
 # Oracle APEX Component Modifier
 
-A **Claude Code Skill** that exports Oracle APEX components, modifies the exported files, applies DB changes, and imports everything back — using **Oracle SQLcl's MCP Server**.
+A **Claude Code Skill** that exports Oracle APEX components, modifies the exported files, applies DB changes, and imports everything back — using **Oracle SQLcl CLI**.
 
 [![Installation Guide](https://img.youtube.com/vi/XRdzPfbtRwM/maxresdefault.jpg)](https://www.youtube.com/watch?v=XRdzPfbtRwM)
 
@@ -15,7 +15,7 @@ The skill gives Claude Code the ability to directly modify your Oracle APEX appl
 5. **Importing** the patched component back into APEX via SQLcl
 6. **Validating** the result (compilation checks, re-export diff)
 
-All steps run through the SQLcl MCP server — no manual SQL or file editing required.
+All steps run through SQLcl CLI via the Bash tool — no manual SQL or file editing required.
 
 ## Supported Components
 
@@ -48,7 +48,7 @@ This repo also provides read-only skills for inspection and pattern learning:
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) CLI installed
-- [SQLcl 25.2.0+](https://www.oracle.com/database/sqldeveloper/technologies/sqlcl/) with Java 17 or 21
+- [SQLcl 25.1+](https://www.oracle.com/database/sqldeveloper/technologies/sqlcl/) with Java 17 or 21
 
 ## Installation
 
@@ -64,23 +64,21 @@ cp -r /tmp/apex-skill/.claude/skills/apex .claude/skills/
 rm -rf /tmp/apex-skill
 ```
 
-### 2. Add the SQLcl MCP server
+### 2. Ensure SQLcl is on your PATH
+
+The skill runs SQLcl commands via the Bash tool. Verify it's available:
 
 ```bash
-claude mcp add sqlcl -- sql -R 1 -mcp
+sql -version
 ```
 
-> This registers SQLcl as an MCP server for Claude Code. The `-R 1` flag sets the restriction level (1 = least restrictive). Use `-R 4` for stricter environments.
-
-If `sql` is not on your PATH, use the full path:
+If `sql` is not on your PATH, add it:
 
 | OS      | Typical path                         |
 |---------|--------------------------------------|
 | Linux   | `/opt/sqlcl/bin/sql`                 |
 | macOS   | `/usr/local/bin/sql`                 |
 | Windows | `C:\Users\<you>\Oracle\sqlcl\bin\sql` |
-
-> **Note:** Running `claude mcp add` creates a `.mcp.json` in your project root. If you already have one, the new entry is merged automatically.
 
 ### 3. Create a saved SQLcl connection
 
@@ -91,7 +89,7 @@ sql /nolog
 conn -save DEV -savepwd -user YOUR_USER/YOUR_PASS@host:port/service
 ```
 
-This stores the connection in `~/.dbtools` so the MCP server can use it without prompting for credentials.
+This stores the connection in `~/.dbtools` so the skill can connect without prompting for credentials.
 
 ### 4. Configure skill settings
 
@@ -145,7 +143,7 @@ Arguments:
 
 When invoked, the skill follows a structured 9-step workflow:
 
-1. **Discover MCP tools** — confirms SQLcl MCP connectivity
+1. **Verify SQLcl** — confirms SQLcl CLI connectivity
 2. **Create working area** — timestamped folder; creates a git branch if in a repo
 3. **Identify target** — normalizes the component selector, resolves IDs via `apex list`
 4. **Export** — runs `apex export -split -expComponents` to get the component files
@@ -210,7 +208,7 @@ The `app-patterns/` directory (initially empty) stores conventions learned from 
 | Problem | Solution |
 |---------|----------|
 | Skill not listed in Claude Code | Ensure `SKILL.md` is at `.claude/skills/apex/SKILL.md` |
-| SQLcl MCP not connecting | Verify `sql` is on your PATH or use full path in `claude mcp add` |
+| SQLcl not found | Verify `sql` is on your PATH — run `sql -version` to check |
 | `No saved connection found` | Run `conn -save <alias> -savepwd` inside SQLcl |
 | Java version errors | SQLcl 25.2+ requires Java 17 or 21 — check with `java -version` |
 | Import ID collision | Re-export to get fresh IDs; check `apex_imp.md` ID rules |

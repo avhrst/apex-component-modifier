@@ -2,18 +2,18 @@
 
 This repo defines **Claude Code Skills** for working with **Oracle Database and APEX**:
 
-1. **apex** — Export/patch/import APEX components via SQLcl MCP
+1. **apex** — Export/patch/import APEX components via SQLcl CLI (Bash tool)
 2. **sqlcl** — General-purpose Oracle DB & APEX operations (SQL, schema inspection, data ops, Liquibase, Data Pump, CI/CD projects)
 
 ## What you’re building
 
 A repeatable workflow:
 
-1. **Export** an APEX component (page / shared component / partial component set) using **SQLcl MCP**.
+1. **Export** an APEX component (page / shared component / partial component set) using **SQLcl CLI**.
 2. **Read local docs** for `apex_imp` (bundled in this skill directory) to guide safe modifications.
-3. **Apply DB changes** (create/alter tables, packages, views, grants) via **SQLcl MCP**.
+3. **Apply DB changes** (create/alter tables, packages, views, grants) via **SQLcl CLI**.
 4. **Patch the exported component file(s)** in the export directory.
-5. **Import** (run install scripts) via **SQLcl MCP**.
+5. **Import** (run install scripts) via **SQLcl CLI**.
 6. **Validate** (compile, sanity queries, optional APEX metadata checks).
 
 > APEX exports/installs via SQLcl are supported by Oracle APEX Administration Guide; exporting/importing via SQLcl is supported in SQLcl release 22.1+ and later.
@@ -26,18 +26,11 @@ A repeatable workflow:
 - Project skills live in `.claude/skills/` and can be committed to version control.
 - `disable-model-invocation: true` means **only the user** can invoke the skill (useful for side-effect workflows like import/deploy).
 
-### Claude Code MCP
-- Project-scoped MCP servers are stored in a `.mcp.json` at repo root.
-- You can add a local stdio server with `claude mcp add --transport stdio ...`.
-- `.mcp.json` supports environment variable expansion like `${VAR}` and `${VAR:-default}`.
-
-### Oracle SQLcl MCP Server
-- SQLcl ships an MCP server mode: configure MCP clients to run `sql` with `args: ["-mcp"]`.
-- Requires **SQLcl 25.2.0+** and **Java 17 or 21**.
+### Oracle SQLcl CLI
+- The skill runs SQLcl commands via the Bash tool (not MCP).
+- Requires **SQLcl 25.1+** and **Java 17 or 21**.
 - Uses saved connections in `~/.dbtools`; create one with `conn -save ... -savepwd ...`.
-- Exposes MCP tools: `list-connections`, `connect`, `disconnect`, `run-sql`, `run-sqlcl`.
-- Security + auditing features: recommends least privilege; avoids prod; logs to `DBTOOLS$MCP_LOG` and marks sessions in `V$SESSION`.
-- Restrict levels: defaults to **level 4** (most restrictive); you can pass `-R <level>` to allow more capabilities.
+- `sql` must be on the PATH so the skill can invoke it from Bash.
 
 ---
 
@@ -122,7 +115,6 @@ apex-component-modifier/
 │           ├── SKILL.md                         -- SQLcl general-purpose skill
 │           ├── references/
 │           │   ├── README.md                    -- Reference index & decision tree
-│           │   ├── mcp_tools.md                 -- MCP server tools, connections, restriction levels
 │           │   ├── sql_plsql.md                 -- SQL queries, DML, DDL, PL/SQL patterns
 │           │   ├── schema_commands.md           -- INFO, DDL, DESC, CTAS, OERR, CODESCAN, REST
 │           │   ├── data_commands.md             -- LOAD, SPOOL, BRIDGE, DATAPUMP, SODA, SQLFORMAT
