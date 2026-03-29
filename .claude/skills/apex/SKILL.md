@@ -126,6 +126,18 @@ Also check: `app-patterns/catalog.md` + `conventions.md` — if present, load to
 ### 4) Plan (T2/T3 only)
 For T1, skip planning — go straight to patching. For T2/T3: split into DB changes (DDL/DML/PLSQL) and APEX patches. Order: DB first -> patch export -> import.
 
+**Incremental import strategy (T2/T3 — REQUIRED):**
+
+Because `set_environment.sql` uses `whenever sqlerror exit rollback`, **any single error rolls back the entire import**. Do NOT patch all components into one file and import once. Instead, add components one at a time:
+
+1. Export page → add **one** component (e.g. a region) → import → verify it worked
+2. Re-export page → add **next** component → import → verify
+3. Repeat until all components are in place
+
+This catches errors early — a bad parameter on one item won't destroy 20 previously-good regions. Each re-export captures APEX's canonical format for what you already imported, so you're always patching a known-good baseline.
+
+**When to batch:** Simple, low-risk components of the same type (e.g. multiple IR columns, multiple DA actions on the same event) can be added together in one pass. But mix component types (regions + items + DAs) incrementally.
+
 ### 5) Apply DB changes (if any)
 Generate idempotent scripts. Execute via `sql` CLI (Bash tool). Validate compilation.
 ```bash
@@ -165,7 +177,17 @@ EOF
 - Single quotes doubled inside strings: `'it''s'`
 
 **Hidden items set by JavaScript (DAs):**
-- If a hidden item is set via `$s()` from a Dynamic Action, it MUST have `p_protection_level=>'N'` (unrestricted) AND `'value_protected', 'N'` in attributes. Otherwise APEX throws `ORA-20987` or "Session state protection violation" because the checksum is missing from client-side JS calls.
+- Hidden items set via `$s()` from a DA work fine with `p_protection_level=>'S'` and `value_protected=>'Y'` because `$s()` uses AJAX (not URL parameters), so session state protection checksums don't apply.
+- **DO NOT** use `p_protection_level=>'N'` or `value_protected=>'N'` with `NATIVE_HIDDEN` — this violates the `WWV_VALID_FSITEM_IDT` check constraint and the import will fail with `ORA-02290`.
+- Chart/region refresh via `p_ajax_items_to_submit` submits the item value via AJAX POST, which works correctly with the default protection settings.
+
+**Item attributes format (APEX 24.2+):**
+- Use `wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2('key','value',...)).to_clob` — NOT bare `wwv_flow_t_varchar2(...)`.
+- Example: `,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2('value_protected', 'Y')).to_clob`
+- When unsure of the format, export a reference page containing that item type from any app and copy the exact syntax.
+
+**Item defaults:**
+- Use `p_item_default=>'value'` only — do NOT include `p_item_default_type`. APEX exports omit it; including it (e.g. `'STATIC'`) causes `ORA-02290` constraint violations.
 
 **IDs:**
 - Scan all `wwv_flow_imp.id(...)` values in the file
@@ -214,9 +236,12 @@ Re-export + diff. Deliver: change summary, modified files, patch diff, import lo
 | DB script fails | Fix + re-run; reverse with DROP/ALTER |
 | Invalid patched file | `git checkout -- <file>`, re-patch |
 | Import ORA-06550 (PLS-00103) | Nested `begin...end;/` blocks — fix block boundaries per structure rules above |
+| Import ORA-02290 (`WWV_VALID_FSITEM_IDT`) | Invalid item parameter combination. Common causes: (1) `p_protection_level=>'N'` or `value_protected=>'N'` on `NATIVE_HIDDEN` — use `'S'`/`'Y'` instead; (2) `p_item_default_type` included — remove it, use only `p_item_default`; (3) wrong `p_attributes` format — must be `wwv_flow_t_plugin_attributes(...).to_clob`. Export a working item of the same type from any app as reference. |
+| Import rolls back all changes | `set_environment.sql` contains `whenever sqlerror exit rollback`. **Any** error in the page file aborts the entire import and rolls back all components. Fix the failing call first, then reimport — partial imports are not possible. |
 | Import ID collision | Revisit ID rules; regenerate |
 | Import compilation error | `show errors`; fix DB objects; re-import |
 | Component broken | Re-import baseline export |
+| Unknown parameter format | Export a reference page from any app containing that component type (`apex export -applicationid <N> -split -dir /tmp/ref -expComponents "PAGE:<N>"`), then grep for the parameter to see the exact syntax APEX uses. |
 
 Rollback: git -> `git checkout` + re-import. No git -> re-export from APEX.
 
